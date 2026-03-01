@@ -1,9 +1,10 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 
-import 'grocery_category_screen.dart';
-import 'pharmacy_category_screen.dart';
-import '../data/grocery_data.dart';
+import 'screen/grocery_category_screen.dart';
+import 'screen/pharmacy_category_screen.dart';
+import 'restaurants/screens/restaurants_category_screen.dart';
+import 'data/grocery_data.dart';
 
 class HomeScreen extends StatefulWidget {
   @override
@@ -11,7 +12,6 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-
   final PageController _pageController = PageController();
 
   List<String> banners = [
@@ -27,11 +27,11 @@ class _HomeScreenState extends State<HomeScreen> {
     {"icon": Icons.cleaning_services, "title": "Cleaning"},
   ];
 
+  // ❌ Electric removed
   List<Map<String, dynamic>> categories = [
     {"icon": Icons.local_grocery_store, "title": "Grocery"},
     {"icon": Icons.local_pharmacy, "title": "Pharmacy"},
     {"icon": Icons.restaurant, "title": "Restaurants"},
-    {"icon": Icons.electrical_services, "title": "Electric"},
     {"icon": Icons.hardware, "title": "Hardware"},
   ];
 
@@ -39,15 +39,14 @@ class _HomeScreenState extends State<HomeScreen> {
   void initState() {
     super.initState();
 
-    // Auto Carousel
-    Timer.periodic(Duration(seconds: 3), (Timer timer) {
+    Timer.periodic(const Duration(seconds: 3), (Timer timer) {
       if (_pageController.hasClients) {
         int nextPage = _pageController.page!.round() + 1;
         if (nextPage == banners.length) nextPage = 0;
 
         _pageController.animateToPage(
           nextPage,
-          duration: Duration(milliseconds: 400),
+          duration: const Duration(milliseconds: 400),
           curve: Curves.easeIn,
         );
       }
@@ -58,7 +57,6 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.green.shade50,
-
       body: SafeArea(
         child: SingleChildScrollView(
           child: Column(
@@ -67,8 +65,8 @@ class _HomeScreenState extends State<HomeScreen> {
 
               // 🔹 Location Bar
               Container(
-                padding: EdgeInsets.all(15),
-                decoration: BoxDecoration(
+                padding: const EdgeInsets.all(15),
+                decoration: const BoxDecoration(
                   color: Colors.green,
                   borderRadius: BorderRadius.only(
                     bottomLeft: Radius.circular(20),
@@ -76,7 +74,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                 ),
                 child: Row(
-                  children: [
+                  children: const [
                     Icon(Icons.location_on, color: Colors.white),
                     SizedBox(width: 8),
                     Expanded(
@@ -90,7 +88,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
               ),
 
-              SizedBox(height: 15),
+              const SizedBox(height: 15),
 
               // 🔹 Carousel
               SizedBox(
@@ -100,7 +98,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   itemCount: banners.length,
                   itemBuilder: (context, index) {
                     return Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 15),
+                      padding: const EdgeInsets.symmetric(horizontal: 15),
                       child: ClipRRect(
                         borderRadius: BorderRadius.circular(15),
                         child: Image.network(
@@ -113,10 +111,10 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
               ),
 
-              SizedBox(height: 20),
+              const SizedBox(height: 20),
 
               // 🔹 Services
-              Padding(
+              const Padding(
                 padding: EdgeInsets.symmetric(horizontal: 15),
                 child: Text(
                   "Services",
@@ -124,15 +122,15 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
               ),
 
-              SizedBox(height: 10),
+              const SizedBox(height: 10),
 
               Padding(
-                padding: EdgeInsets.symmetric(horizontal: 15),
+                padding: const EdgeInsets.symmetric(horizontal: 15),
                 child: GridView.builder(
                   shrinkWrap: true,
-                  physics: NeverScrollableScrollPhysics(),
+                  physics: const NeverScrollableScrollPhysics(),
                   itemCount: services.length,
-                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                     crossAxisCount: 2,
                     crossAxisSpacing: 15,
                     mainAxisSpacing: 15,
@@ -147,12 +145,15 @@ class _HomeScreenState extends State<HomeScreen> {
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Icon(services[index]["icon"],
-                              size: 40, color: Colors.green),
-                          SizedBox(height: 10),
+                          Icon(
+                            services[index]["icon"],
+                            size: 40,
+                            color: Colors.green,
+                          ),
+                          const SizedBox(height: 10),
                           Text(
                             services[index]["title"],
-                            style: TextStyle(fontWeight: FontWeight.bold),
+                            style: const TextStyle(fontWeight: FontWeight.bold),
                           ),
                         ],
                       ),
@@ -161,10 +162,10 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
               ),
 
-              SizedBox(height: 20),
+              const SizedBox(height: 20),
 
               // 🔹 Categories
-              Padding(
+              const Padding(
                 padding: EdgeInsets.symmetric(horizontal: 15),
                 child: Text(
                   "Categories",
@@ -172,7 +173,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
               ),
 
-              SizedBox(height: 10),
+              const SizedBox(height: 10),
 
               SizedBox(
                 height: 90,
@@ -181,11 +182,13 @@ class _HomeScreenState extends State<HomeScreen> {
                   itemCount: categories.length,
                   itemBuilder: (context, index) {
                     return Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 12),
+                      padding: const EdgeInsets.symmetric(horizontal: 12),
                       child: GestureDetector(
                         onTap: () {
 
-                          if (categories[index]["title"] == "Grocery") {
+                          String title = categories[index]["title"];
+
+                          if (title == "Grocery") {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
@@ -195,12 +198,23 @@ class _HomeScreenState extends State<HomeScreen> {
                             );
                           }
 
-                          if (categories[index]["title"] == "Pharmacy") {
+                          if (title == "Pharmacy") {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
                                 builder: (context) =>
                                     PharmacyCategoryScreen(),
+                              ),
+                            );
+                          }
+
+                          // ✅ RESTAURANTS ADDED HERE
+                          if (title == "Restaurants") {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) =>
+                                    const RestaurantsCategoryScreen(),
                               ),
                             );
                           }
@@ -216,8 +230,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                 color: Colors.green,
                               ),
                             ),
-                            SizedBox(height: 6),
-                            Text(categories[index]["title"]),
+                            const SizedBox(height: 6),
+                           Text(categories[index]["title"])
                           ],
                         ),
                       ),
@@ -226,17 +240,16 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
               ),
 
-              SizedBox(height: 30),
+              const SizedBox(height: 30),
             ],
           ),
         ),
       ),
 
-      // 🔹 Bottom Navigation
       bottomNavigationBar: BottomNavigationBar(
         selectedItemColor: Colors.green,
         currentIndex: 0,
-        items: [
+        items: const [
           BottomNavigationBarItem(
             icon: Icon(Icons.home),
             label: "Home",
