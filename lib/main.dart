@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'screens/login_screen.dart';
 import 'screens/signup_screen.dart';
-import 'screen/home_screen.dart';
+import 'home_screen.dart';
 
 void main() {
   runApp(GharTakApp());
