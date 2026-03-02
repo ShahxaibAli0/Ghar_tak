@@ -4,9 +4,12 @@ import 'package:flutter/material.dart';
 import 'screen/grocery_category_screen.dart';
 import 'screen/pharmacy_category_screen.dart';
 import 'restaurants/screens/restaurants_category_screen.dart';
+import 'electric/screens/electric_category_screen.dart'; // ✅ Added
 import 'data/grocery_data.dart';
 
 class HomeScreen extends StatefulWidget {
+  const HomeScreen({Key? key}) : super(key: key);
+
   @override
   _HomeScreenState createState() => _HomeScreenState();
 }
@@ -27,11 +30,12 @@ class _HomeScreenState extends State<HomeScreen> {
     {"icon": Icons.cleaning_services, "title": "Cleaning"},
   ];
 
-  // ❌ Electric removed
+  // ✅ Electric Added Here
   List<Map<String, dynamic>> categories = [
     {"icon": Icons.local_grocery_store, "title": "Grocery"},
     {"icon": Icons.local_pharmacy, "title": "Pharmacy"},
     {"icon": Icons.restaurant, "title": "Restaurants"},
+    {"icon": Icons.electrical_services, "title": "Electric"},
     {"icon": Icons.hardware, "title": "Hardware"},
   ];
 
@@ -73,8 +77,8 @@ class _HomeScreenState extends State<HomeScreen> {
                     bottomRight: Radius.circular(20),
                   ),
                 ),
-                child: Row(
-                  children: const [
+                child: const Row(
+                  children: [
                     Icon(Icons.location_on, color: Colors.white),
                     SizedBox(width: 8),
                     Expanded(
@@ -186,7 +190,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       child: GestureDetector(
                         onTap: () {
 
-                          String title = categories[index]["title"];
+                          final title = categories[index]["title"];
 
                           if (title == "Grocery") {
                             Navigator.push(
@@ -208,13 +212,22 @@ class _HomeScreenState extends State<HomeScreen> {
                             );
                           }
 
-                          // ✅ RESTAURANTS ADDED HERE
                           if (title == "Restaurants") {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
                                 builder: (context) =>
                                     const RestaurantsCategoryScreen(),
+                              ),
+                            );
+                          }
+
+                          if (title == "Electric") {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) =>
+                                    const ElectricCategoryScreen(),
                               ),
                             );
                           }
@@ -231,7 +244,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               ),
                             ),
                             const SizedBox(height: 6),
-                           Text(categories[index]["title"])
+                            Text(categories[index]["title"]),
                           ],
                         ),
                       ),
@@ -246,10 +259,11 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
       ),
 
+      // 🔹 Bottom Navigation (UNCHANGED)
       bottomNavigationBar: BottomNavigationBar(
         selectedItemColor: Colors.green,
         currentIndex: 0,
-        items: const [
+        items: [
           BottomNavigationBarItem(
             icon: Icon(Icons.home),
             label: "Home",
