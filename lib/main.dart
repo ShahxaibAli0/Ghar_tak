@@ -2,18 +2,15 @@ import 'package:flutter/material.dart';
 import 'screens/login_screen.dart';
 import 'screens/signup_screen.dart';
 import 'home_screen.dart';
-
 void main() {
   runApp(GharTakApp());
 }
-
 class GharTakApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Ghar Tak',
-
       theme: ThemeData(
         primarySwatch: Colors.green,
         scaffoldBackgroundColor: Colors.green.shade50, // ✅ Light green base
@@ -36,10 +33,8 @@ class GharTakApp extends StatelessWidget {
           ),
         ),
       ),
-
       // ✅ Initial route
       initialRoute: '/login',
-
       // ✅ All routes
       routes: {
         '/login': (context) => LoginScreen(),

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import '../data/restaurants_data.dart';
-import '../screens/restaurant_products_screen.dart';
+import 'restaurant_products_screen.dart';
 
 class RestaurantsCategoryScreen extends StatelessWidget {
   const RestaurantsCategoryScreen({Key? key}) : super(key: key);

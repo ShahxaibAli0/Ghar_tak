@@ -4,7 +4,8 @@ import 'package:flutter/material.dart';
 import 'screen/grocery_category_screen.dart';
 import 'screen/pharmacy_category_screen.dart';
 import 'restaurants/screens/restaurants_category_screen.dart';
-import 'electric/screens/electric_category_screen.dart'; // ✅ Added
+import 'electric/screens/electric_category_screen.dart';
+import 'hardware/screens/hardware_screen.dart'; // ✅ Added
 import 'data/grocery_data.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -30,7 +31,6 @@ class _HomeScreenState extends State<HomeScreen> {
     {"icon": Icons.cleaning_services, "title": "Cleaning"},
   ];
 
-  // ✅ Electric Added Here
   List<Map<String, dynamic>> categories = [
     {"icon": Icons.local_grocery_store, "title": "Grocery"},
     {"icon": Icons.local_pharmacy, "title": "Pharmacy"},
@@ -232,6 +232,16 @@ class _HomeScreenState extends State<HomeScreen> {
                             );
                           }
 
+                          if (title == "Hardware") {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) =>
+                                    const HardwareScreen(),
+                              ),
+                            );
+                          }
+
                         },
                         child: Column(
                           children: [
@@ -259,11 +269,10 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
       ),
 
-      // 🔹 Bottom Navigation (UNCHANGED)
       bottomNavigationBar: BottomNavigationBar(
         selectedItemColor: Colors.green,
         currentIndex: 0,
-        items: [
+        items: const [
           BottomNavigationBarItem(
             icon: Icon(Icons.home),
             label: "Home",

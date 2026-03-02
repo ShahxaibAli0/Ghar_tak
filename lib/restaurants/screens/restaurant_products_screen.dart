@@ -4,10 +4,7 @@ import '../data/restaurants_data.dart';
 class RestaurantProductsScreen extends StatelessWidget {
   final Restaurant restaurant;
 
-  const RestaurantProductsScreen({
-    Key? key,
-    required this.restaurant,
-  }) : super(key: key);
+  const RestaurantProductsScreen({Key? key, required this.restaurant}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
