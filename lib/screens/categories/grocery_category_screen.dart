@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'store_products_screen.dart';
 // ignore: unused_import
-import '../data/grocery_data.dart';
+import '../../data/grocery_data.dart';
 
 class GroceryCategoryScreen extends StatelessWidget {
   final List<Map<String, dynamic>> stores;

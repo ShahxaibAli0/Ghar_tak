@@ -3,18 +3,18 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 
 // ✅ Category Screens
-import 'screen/grocery_category_screen.dart';
-import 'screen/pharmacy_category_screen.dart';
-import 'restaurants/screens/restaurants_category_screen.dart';
-import 'electric/screens/electric_category_screen.dart';
-import 'hardware/screens/hardware_screen.dart';
+import '../categories/grocery_category_screen.dart';
+import '../categories/pharmacy_category_screen.dart';
+import '../../restaurants/screens/restaurants_category_screen.dart';
+import '../../electric/screens/electric_category_screen.dart';
+import '../../hardware/screens/hardware_screen.dart';
 // ✅ Service Screen
-import 'services/screens/location_permission_screen.dart';
+import '../services/location_permission_screen.dart';
 // ✅ Data
-import 'data/grocery_data.dart';
-import 'location/data/location_data.dart';
+import '../../data/grocery_data.dart';
+import '../../data/location_data.dart';
 import 'package:geolocator/geolocator.dart';
-import 'services/screens/service_request_screen.dart';
+import '../services/service_request_screen.dart';
 
 
 

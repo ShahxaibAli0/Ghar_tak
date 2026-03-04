@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../data/pharmacy_data.dart';
+import '../../data/pharmacy_data.dart';
 import 'pharmacy_chat_screen.dart';
 
 class PharmacyCategoryScreen extends StatelessWidget {

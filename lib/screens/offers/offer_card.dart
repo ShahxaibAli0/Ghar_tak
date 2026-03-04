@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../models/offer_model.dart';
+import '../../models/offer_model.dart';
 
 class OfferCard extends StatelessWidget {
   final OfferModel offer;

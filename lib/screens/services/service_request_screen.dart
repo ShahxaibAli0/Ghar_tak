@@ -2,10 +2,10 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 
-import '../models/offer_model.dart';
-import '../widgets/upload_image_box.dart';
-import '../widgets/description_field.dart';
-import '../widgets/offer_card.dart';
+import '../../models/offer_model.dart';
+import '../../widgets/upload_image_box.dart';
+import '../../widgets/description_field.dart';
+import '../offers/offer_card.dart';
 
 class ServiceRequestScreen extends StatefulWidget {
   final String serviceName;
