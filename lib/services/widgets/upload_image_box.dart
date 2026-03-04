@@ -16,23 +16,37 @@ class UploadImageBox extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        height: 150,
+        height: 110, // 🔹 smaller height
         width: double.infinity,
         decoration: BoxDecoration(
           color: Colors.white,
-          borderRadius: BorderRadius.circular(20),
+          borderRadius: BorderRadius.circular(12), // 🔹 less rounded
+          border: Border.all(
+            color: Colors.green.shade200,
+            width: 1,
+          ),
         ),
         child: image == null
-            ? const Center(
-                child: Icon(
-                  Icons.camera_alt,
-                  size: 40,
-                  color: Colors.green,
-                ),
+            ? Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: const [
+                  Icon(
+                    Icons.camera_alt,
+                    size: 24,
+                    color: Colors.green,
+                  ),
+                  SizedBox(width: 8),
+                  Text(
+                    "Upload Image",
+                    style: TextStyle(
+                      color: Colors.green,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                ],
               )
             : ClipRRect(
-                borderRadius:
-                    BorderRadius.circular(20),
+                borderRadius: BorderRadius.circular(12),
                 child: Image.file(
                   image!,
                   fit: BoxFit.cover,

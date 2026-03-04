@@ -8,6 +8,7 @@ class Restaurant {
   });
 }
 
+// Sample restaurants
 List<Restaurant> restaurantsList = [
   Restaurant(
     name: "Chezious",

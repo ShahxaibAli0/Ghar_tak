@@ -50,7 +50,7 @@ class _HomeScreenState extends State<HomeScreen> {
     {"image": "assets/images/plumber.jpeg", "title": "Plumber"},
     {"image": "assets/images/carpenter.jpeg", "title": "Carpenter"},
     {"image": "assets/images/electrician.jpeg", "title": "Electrician"},
-    {"image": "assets/images/cleaning.jpeg", "title": "Cleaning"},
+    {"image": "assets/images/it_technician.jpeg", "title": "It Technician"},
   ];
 
   @override

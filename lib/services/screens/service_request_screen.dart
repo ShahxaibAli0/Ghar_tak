@@ -5,7 +5,6 @@ import 'package:image_picker/image_picker.dart';
 import '../models/offer_model.dart';
 import '../widgets/upload_image_box.dart';
 import '../widgets/description_field.dart';
-import '../widgets/send_request_button.dart';
 import '../widgets/offer_card.dart';
 
 class ServiceRequestScreen extends StatefulWidget {
@@ -32,29 +31,32 @@ class _ServiceRequestScreenState
   final TextEditingController _descriptionController =
       TextEditingController();
 
-  // Dummy offers list
   final List<OfferModel> offers = [
-    OfferModel(
-        providerName: "Ali Electric Works",
-        price: "Rs. 1500"),
-    OfferModel(
-        providerName: "Ahmed Services",
-        price: "Rs. 1300"),
-    OfferModel(
-        providerName: "Khan Electrician",
-        price: "Rs. 1400"),
+    OfferModel(providerName: "Ali Electric Works", price: "Rs. 1500"),
+    OfferModel(providerName: "Ahmed Services", price: "Rs. 1300"),
+    OfferModel(providerName: "Khan Electrician", price: "Rs. 1400"),
   ];
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.green.shade50,
+      backgroundColor: Colors.white, // 🔥 White Background
       appBar: AppBar(
-        backgroundColor: Colors.green,
-        title: Text("${widget.serviceName} Service"),
+        elevation: 0,
+        backgroundColor: Colors.white,
+        centerTitle: true,
+        iconTheme: const IconThemeData(color: Colors.black),
+        title: Text(
+          widget.serviceName,
+          style: const TextStyle(
+            fontSize: 20,
+            fontWeight: FontWeight.w700,
+            color: Colors.black87,
+          ),
+        ),
       ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16),
+      body: AnimatedSwitcher(
+        duration: const Duration(milliseconds: 400),
         child: jobAccepted
             ? _buildSuccessSection()
             : requestSent
@@ -107,80 +109,119 @@ class _ServiceRequestScreenState
   // ================= REQUEST FORM =================
 
   Widget _buildRequestForm() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
+    return SingleChildScrollView(
+      padding: const EdgeInsets.all(20),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
 
-        const Text(
-          "Upload Problem Image",
-          style: TextStyle(
-              fontWeight: FontWeight.bold,
-              fontSize: 16),
-        ),
+          const Text(
+            "Upload Problem Image",
+            style: TextStyle(
+                fontWeight: FontWeight.w600,
+                fontSize: 16),
+          ),
 
-        const SizedBox(height: 10),
+          const SizedBox(height: 12),
 
-        UploadImageBox(
-          image: selectedImage,
-          onTap: _showImageSourceSheet,
-        ),
+          UploadImageBox(
+            image: selectedImage,
+            onTap: _showImageSourceSheet,
+          ),
 
-        const SizedBox(height: 25),
+          const SizedBox(height: 30),
 
-        const Text(
-          "Describe Your Problem",
-          style: TextStyle(
-              fontWeight: FontWeight.bold,
-              fontSize: 16),
-        ),
+          const Text(
+            "Describe Your Problem",
+            style: TextStyle(
+                fontWeight: FontWeight.w600,
+                fontSize: 16),
+          ),
 
-        const SizedBox(height: 10),
+          const SizedBox(height: 12),
 
-        DescriptionField(
-          controller: _descriptionController,
-        ),
+          DescriptionField(
+            controller: _descriptionController,
+          ),
 
-        const SizedBox(height: 25),
+          const SizedBox(height: 40),
 
-        SendRequestButton(
-          onPressed: () {
-            if (_descriptionController.text.trim().isEmpty) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
-                  content: Text("Please describe your problem"),
+          SizedBox(
+            width: double.infinity,
+            height: 55,
+            child: ElevatedButton(
+              onPressed: () {
+                if (_descriptionController.text
+                    .trim()
+                    .isEmpty) {
+                  ScaffoldMessenger.of(context)
+                      .showSnackBar(
+                    const SnackBar(
+                      content: Text(
+                          "Please describe your problem"),
+                    ),
+                  );
+                  return;
+                }
+
+                setState(() {
+                  requestSent = true;
+                });
+              },
+              style: ElevatedButton.styleFrom(
+                elevation: 0,
+                backgroundColor: const Color(0xff1E9E6A),
+                shape: RoundedRectangleBorder(
+                  borderRadius:
+                      BorderRadius.circular(18),
                 ),
-              );
-              return;
-            }
-
-            setState(() {
-              requestSent = true;
-            });
-          },
-        ),
-      ],
+              ),
+              child: const Text(
+                "Send Service Request",
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 
-  // ================= OFFERS SECTION =================
+  // ================= OFFERS =================
 
   Widget _buildOffersSection() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
+    return ListView(
+      padding: const EdgeInsets.all(20),
       children: [
 
         const Text(
           "Offers from Providers",
           style: TextStyle(
-              fontSize: 18,
+              fontSize: 22,
               fontWeight: FontWeight.bold),
         ),
 
-        const SizedBox(height: 20),
+        const SizedBox(height: 25),
 
         ...offers.map(
-          (offer) => Padding(
-            padding: const EdgeInsets.only(bottom: 15),
+          (offer) => Container(
+            margin: const EdgeInsets.only(bottom: 20),
+            padding: const EdgeInsets.all(18),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius:
+                  BorderRadius.circular(20),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.04),
+                  blurRadius: 20,
+                  offset: const Offset(0, 8),
+                ),
+              ],
+            ),
             child: OfferCard(
               offer: offer,
               onAccept: _showConfirmationDialog,
@@ -197,12 +238,17 @@ class _ServiceRequestScreenState
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
+        shape: RoundedRectangleBorder(
+          borderRadius:
+              BorderRadius.circular(18),
+        ),
         title: const Text("Confirm Service"),
-        content:
-            const Text("Do you want to accept this offer?"),
+        content: const Text(
+            "Do you want to accept this offer?"),
         actions: [
           TextButton(
-            onPressed: () => Navigator.pop(context),
+            onPressed: () =>
+                Navigator.pop(context),
             child: const Text("Cancel"),
           ),
           ElevatedButton(
@@ -212,6 +258,10 @@ class _ServiceRequestScreenState
                 jobAccepted = true;
               });
             },
+            style: ElevatedButton.styleFrom(
+              backgroundColor:
+                  const Color(0xff1E9E6A),
+            ),
             child: const Text("Yes"),
           ),
         ],
@@ -219,43 +269,30 @@ class _ServiceRequestScreenState
     );
   }
 
-  // ================= SUCCESS SCREEN =================
+  // ================= SUCCESS =================
 
   Widget _buildSuccessSection() {
     return Center(
       child: Column(
+        mainAxisAlignment:
+            MainAxisAlignment.center,
         children: [
-          const SizedBox(height: 80),
           const Icon(
             Icons.check_circle,
-            color: Colors.green,
+            color: Color(0xff1E9E6A),
             size: 100,
           ),
           const SizedBox(height: 20),
           const Text(
             "Service Confirmed!",
             style: TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.bold),
+                fontSize: 22,
+                fontWeight:
+                    FontWeight.bold),
           ),
           const SizedBox(height: 10),
           Text(
               "Your ${widget.serviceName} is on the way."),
-          const SizedBox(height: 30),
-          ElevatedButton(
-            onPressed: () {
-              setState(() {
-                jobAccepted = false;
-                requestSent = false;
-                _descriptionController.clear();
-                selectedImage = null;
-              });
-            },
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.green,
-            ),
-            child: const Text("Back"),
-          )
         ],
       ),
     );
