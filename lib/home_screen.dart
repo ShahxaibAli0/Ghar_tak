@@ -8,13 +8,18 @@ import 'screen/pharmacy_category_screen.dart';
 import 'restaurants/screens/restaurants_category_screen.dart';
 import 'electric/screens/electric_category_screen.dart';
 import 'hardware/screens/hardware_screen.dart';
-
 // ✅ Service Screen
-import 'services/screens/service_request_screen.dart';
-
+import 'services/screens/location_permission_screen.dart';
 // ✅ Data
 import 'data/grocery_data.dart';
 import 'location/data/location_data.dart';
+import 'package:geolocator/geolocator.dart';
+import 'services/screens/service_request_screen.dart';
+
+
+
+
+
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -159,16 +164,42 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   // ✅ UPDATED: Now ALL services open ServiceRequestScreen
-  void _navigateService(String title) {
+  // void _OldnavigateService(String title) {
+  //   Navigator.push(
+  //     context,
+  //     MaterialPageRoute(
+  //       builder: (context) =>
+  //           ServiceRequestScreen(serviceName: title),
+  //     ),
+  //   );
+  // }
+  Future<void> _navigateService(String title) async {
+
+  LocationPermission permission = await Geolocator.checkPermission();
+
+  if (permission == LocationPermission.always ||
+      permission == LocationPermission.whileInUse) {
+
+    // ✅ Permission already granted → go directly
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) =>
-            ServiceRequestScreen(serviceName: title),
+        builder: (_) => ServiceRequestScreen(serviceName: title),
       ),
     );
-  }
 
+  } else {
+
+    // ❌ Permission not granted → show permission screen
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => LocationPermissionScreen(serviceName: title),
+      ),
+    );
+
+  }
+}
   @override
   Widget build(BuildContext context) {
     return Scaffold(
