@@ -1,19 +1,19 @@
-class OfferModel {
+class ProviderModel {
 
-  final String providerName;
+  final String name;
   final String category;
-  final double price;
   final double rating;
   final int completedJobs;
   final String description;
+  final String imageUrl;
 
-  OfferModel({
-    required this.providerName,
+  ProviderModel({
+    required this.name,
     required this.category,
-    required this.price,
     required this.rating,
     required this.completedJobs,
     required this.description,
+    required this.imageUrl,
   });
 
 }
