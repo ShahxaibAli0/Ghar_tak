@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 
@@ -6,7 +7,11 @@ import '../../widgets/upload_image_box.dart';
 import '../../widgets/description_field.dart';
 
 import '../../data/notification_data.dart';
-import '../../models/notifications_model.dart' hide appNotifications;
+import '../../models/notifications_model.dart';
+
+// OFFERS
+import '../../data/dummy_offers_data.dart';
+import '../../models/offer_model.dart';
 
 class ServiceRequestScreen extends StatefulWidget {
   final String serviceName;
@@ -57,7 +62,7 @@ class _ServiceRequestScreenState
     );
   }
 
-  // ================= IMAGE PICKER =================
+  // IMAGE PICKER
 
   Future<void> _pickImage(ImageSource source) async {
 
@@ -101,7 +106,7 @@ class _ServiceRequestScreenState
     );
   }
 
-  // ================= REQUEST FORM =================
+  // REQUEST FORM
 
   Widget _buildRequestForm() {
 
@@ -167,30 +172,65 @@ class _ServiceRequestScreenState
                   return;
                 }
 
-                // ✅ ADD NOTIFICATION
-                appNotifications.add(
-                  appNotification(
-                    title: "Request Sent",
-                    message:
+                // ADD OFFER REQUEST
+                dummyOffers.add(
+                  Offer(
+                    providerName: "Ali Electrician",
+                    serviceName: widget.serviceName,
+                    description: _descriptionController.text,
+                    price: 500,
+                    category: "Electrician",
+                    status: "pending",
+                    rating: 4.5,
+                    completedjobs: 120,
+                  ),
+                );
+
+                // SUCCESS DIALOG
+                showDialog(
+                  context: context,
+                  barrierDismissible: false,
+                  builder: (context) {
+
+                    return AlertDialog(
+
+                      title: const Text("Success"),
+
+                      content: Text(
                         "${widget.serviceName} request sent successfully",
-                    time: DateTime.now(),
-                  ),
+                      ),
+
+                      actions: [
+
+                        TextButton(
+                          onPressed: () {
+
+                            Navigator.pop(context);
+                            Navigator.pop(context);
+
+                          },
+                          child: const Text("OK"),
+                        ),
+
+                      ],
+                    );
+                  },
                 );
 
-                // ✅ Show Success Message
-                ScaffoldMessenger.of(context)
-                    .showSnackBar(
-                  SnackBar(
-                    content: Text(
-                      "${widget.serviceName} request sent successfully",
+                // ADD NOTIFICATION AFTER 1 MINUTE
+                Timer(const Duration(minutes: 1), () {
+
+                  appNotifications.add(
+                    NotificationModel(
+                      title: "Request Sent",
+                      message:
+                          "${widget.serviceName} request sent successfully",
+                      time:"${DateTime.now().hour}:${DateTime.now().minute}",
                     ),
-                    backgroundColor:
-                        const Color(0xff1E9E6A),
-                  ),
-                );
+                  );
 
-                // ✅ Back to Home Screen
-                Navigator.pop(context);
+                });
+
               },
 
               style: ElevatedButton.styleFrom(

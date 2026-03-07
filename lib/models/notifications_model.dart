@@ -1,15 +1,13 @@
-class appNotification {
+class NotificationModel {
 
   final String title;
   final String message;
-  final DateTime time;
+  final String time;
 
-  appNotification({
+  NotificationModel({
     required this.title,
     required this.message,
     required this.time,
   });
-}
 
-// Global list
-List<appNotification> appNotifications = [];
+}

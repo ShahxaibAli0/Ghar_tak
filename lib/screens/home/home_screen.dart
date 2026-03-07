@@ -25,8 +25,9 @@ import '../cart/cart_screen.dart';
 import '../profile/profile_screen.dart';
 
 // ✅ Notification Screens
-import '../notifications/notifications_screen.dart';
+import '../../data/notification_data.dart';
 import '../../models/notifications_model.dart';
+import '../notifications/notification_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -284,53 +285,55 @@ class _HomeScreenState extends State<HomeScreen> {
                       ),
                     ),
 
-                    Stack(
-                      children: [
+                    
 
-                        IconButton(
-                          icon: const Icon(
-                            Icons.notifications,
-                            color: Colors.white,
-                          ),
-                          onPressed: () {
+  Stack(
+    children: [
 
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) =>
-                                    const NotificationScreen(),
-                              ),
-                            );
+      IconButton(
+        icon: const Icon(Icons.notifications_none),
+        onPressed: () {
 
-                            setState(() {});
-                          },
-                        ),
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (_) => const NotificationScreen(),
+            ),
+          );
 
-                        if (appNotifications.isNotEmpty)
+        },
+      ),
 
-                          Positioned(
-                            right: 5,
-                            top: 5,
-                            child: Container(
-                              padding: const EdgeInsets.all(4),
-                              decoration: const BoxDecoration(
-                                color: Colors.red,
-                                shape: BoxShape.circle,
-                              ),
-                              child: Text(
-                                appNotifications.length.toString(),
-                                style: const TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 10,
-                                ),
-                              ),
-                            ),
-                          ),
+      if (appNotifications.isNotEmpty)
 
-                      ],
-                    )
+        Positioned(
+          right: 8,
+          top: 8,
+          child: Container(
 
-                  ],
+            padding: const EdgeInsets.all(5),
+
+            decoration: const BoxDecoration(
+              color: Colors.red,
+              shape: BoxShape.circle,
+            ),
+
+            child: Text(
+              appNotifications.length.toString(),
+
+              style: const TextStyle(
+                color: Colors.white,
+                fontSize: 12,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ),
+        ),
+
+    ],
+  ),
+
+],
                 ),
               ),
             ),

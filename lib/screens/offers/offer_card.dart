@@ -4,7 +4,7 @@ import 'view_bid_screen.dart';
 
 class OfferCard extends StatelessWidget {
 
-  final OfferModel offer;
+  final Offer offer;
 
   const OfferCard({super.key, required this.offer});
 
@@ -38,7 +38,7 @@ class OfferCard extends StatelessWidget {
                 const Icon(Icons.star, color: Colors.orange, size: 18),
                 Text("${offer.rating}"),
                 const SizedBox(width: 10),
-                Text("${offer.completedJobs} Jobs"),
+                Text("${offer.completedjobs} Jobs"),
               ],
             ),
 

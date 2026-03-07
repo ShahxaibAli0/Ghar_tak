@@ -3,7 +3,7 @@ import '../../models/offer_model.dart';
 
 class ViewBidScreen extends StatelessWidget {
 
-  final OfferModel offer;
+  final Offer offer;
 
   const ViewBidScreen({super.key, required this.offer});
 
@@ -40,7 +40,7 @@ class ViewBidScreen extends StatelessWidget {
                 const Icon(Icons.star, color: Colors.orange),
                 Text("${offer.rating}"),
                 const SizedBox(width: 10),
-                Text("${offer.completedJobs} Jobs Completed"),
+                Text("${offer.completedjobs} Jobs Completed"),
               ],
             ),
 

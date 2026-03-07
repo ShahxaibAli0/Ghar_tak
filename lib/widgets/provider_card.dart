@@ -1,67 +1,67 @@
 import 'package:flutter/material.dart';
 import '../models/provider_model.dart';
-import '../screens/provider/provider_profile_screen.dart';
+import '../screens/providers/provider_profile_screen.dart';
 
-class ProviderCard extends StatelessWidget {
+class Offer {
+  final String title;
+  final String providerName;
 
-  final ProviderModel provider;
+  Offer({
+    required this.title,
+    required this.providerName,
+  });
+}
 
-  const ProviderCard({super.key, required this.provider});
+
+class ProviderProfileScreen extends StatelessWidget {
+  final Offer offer;
+
+  const ProviderProfileScreen({
+    Key? key,
+    required this.offer,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(offer.title),
+      ),
+      body: Center(
+        child: Text(
+          "Provider Name: ${offer.providerName}",
+          style: TextStyle(fontSize: 20),
+        ),
+      ),
+    );
+  }
+}
 
+class ProviderCard extends StatelessWidget {
+  final Offer offer;
+
+  const ProviderCard({
+    Key? key,
+    required this.offer,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
     return Card(
-      margin: const EdgeInsets.all(10),
-
       child: ListTile(
-
-        leading: const CircleAvatar(
-          child: Icon(Icons.person),
-        ),
-
-        title: Text(provider.name),
-
-        subtitle: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-
-            Text(provider.category),
-
-            Row(
-              children: [
-
-                const Icon(Icons.star, size: 16, color: Colors.orange),
-
-                Text("${provider.rating}"),
-
-                const SizedBox(width: 8),
-
-                Text("${provider.completedJobs} jobs"),
-
-              ],
-            )
-
-          ],
-        ),
-
-        trailing: const Icon(Icons.arrow_forward),
-
+        title: Text(offer.title),
+        subtitle: Text(offer.providerName),
         onTap: () {
-
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (_) => ProviderProfileScreen(provider: provider),
+              builder: (context) => ProviderProfileScreen(
+                offer: offer,
+              ),
             ),
           );
-
         },
-
       ),
-
     );
-
   }
-
 }
