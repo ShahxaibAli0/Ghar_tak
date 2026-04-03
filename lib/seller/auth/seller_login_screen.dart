@@ -77,7 +77,7 @@ class _SellerLoginScreenState extends State<SellerLoginScreen> {
                   children: [
 
                     const Text(
-                      'Welcome Back! 👋',
+                      'Welcome Back! ',
                       style: TextStyle(
                         fontSize: 22,
                         fontWeight: FontWeight.bold,
