@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'screens/auth/login_screen.dart';
 import 'screens/auth/signup_screen.dart';
 import 'screens/home/home_screen.dart';
+import 'seller/auth/become_vendor_screen.dart';
 void main() {
   runApp(GharTakApp());
 }

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:ghar_tak/vendor_panel/products/product_list_screen.dart';
-import 'package:ghar_tak/vendor_panel/products/add_product_screen.dart';
+import 'package:ghar_tak/seller/products/product_list_screen.dart';
+import 'package:ghar_tak/seller/products/add_product_screen.dart';
 
 class VendorDashboardScreen extends StatelessWidget {
   const VendorDashboardScreen({super.key});
@@ -9,7 +9,7 @@ class VendorDashboardScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Vendor Dashboard"),
+        title: const Text("SellerDashboardScreen"),
         centerTitle: true,
       ),
       body: Padding(

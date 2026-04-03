@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:ghar_tak/vendor_panel/auth/vendor_register_screen.dart';
+import 'package:ghar_tak/seller/auth/seller_register_screen.dart';
 
 class BecomeVendorScreen extends StatelessWidget {
   const BecomeVendorScreen({super.key});
@@ -43,7 +43,7 @@ class BecomeVendorScreen extends StatelessWidget {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (_) => const VendorRegisterScreen(),
+                      builder: (_) => const SellerRegisterScreen(),
                     ),
                   );
                 },

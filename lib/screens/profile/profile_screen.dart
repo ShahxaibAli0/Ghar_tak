@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:ghar_tak/vendor_panel/auth/become_vendor_screen.dart';
+import 'package:ghar_tak/seller/auth/become_vendor_screen.dart';
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
