@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:ghar_tak/vendor_panel/auth/become_vendor_screen.dart';
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
@@ -64,6 +65,19 @@ class ProfileScreen extends StatelessWidget {
               onTap: () {},
             ),
 
+            ListTile(
+              leading: const Icon(Icons.storefront),
+              title: const Text("Become a Vendor"),
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => const BecomeVendorScreen(),
+                  ),
+                );
+              },
+            ),
+            
           ],
         ),
       ),
