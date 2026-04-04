@@ -3,10 +3,16 @@ import 'screens/auth/login_screen.dart';
 import 'screens/auth/signup_screen.dart';
 import 'screens/home/home_screen.dart';
 import 'seller/auth/become_vendor_screen.dart';
+import 'seller/splash/seller_splash_screen.dart';
+import 'seller/widgets/seller_bottom_nav.dart';
+
 void main() {
-  runApp(GharTakApp());
+  runApp(const GharTakApp());
 }
+
 class GharTakApp extends StatelessWidget {
+  const GharTakApp({super.key});
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -14,13 +20,14 @@ class GharTakApp extends StatelessWidget {
       title: 'Ghar Tak',
       theme: ThemeData(
         primarySwatch: Colors.green,
-        scaffoldBackgroundColor: Colors.green.shade50, // ✅ Light green base
+        scaffoldBackgroundColor: Colors.green.shade50,
         inputDecorationTheme: InputDecorationTheme(
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(12),
           ),
           focusedBorder: OutlineInputBorder(
-            borderSide: BorderSide(color: Colors.green, width: 2),
+            borderSide:
+                const BorderSide(color: Colors.green, width: 2),
             borderRadius: BorderRadius.circular(12),
           ),
         ),
@@ -30,17 +37,27 @@ class GharTakApp extends StatelessWidget {
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(12),
             ),
-            minimumSize: Size(double.infinity, 50),
+            minimumSize: const Size(double.infinity, 50),
           ),
         ),
       ),
-      // ✅ Initial route
+
+      // ✅ User Side se start hoga
       initialRoute: '/login',
-      // ✅ All routes
+
       routes: {
-        '/login': (context) => LoginScreen(),
+        // ── User Side Routes ──
+        '/login':  (context) => LoginScreen(),
         '/signup': (context) => SignupScreen(),
-        '/home': (context) => HomeScreen(),
+        '/home':   (context) => HomeScreen(),
+
+        // ── Seller Side Routes ──
+        '/seller-splash':  (context) =>
+            const SellerSplashScreen(),
+        '/seller-home':    (context) =>
+            const SellerBottomNav(),
+        '/become-vendor':  (context) =>
+            BecomeVendorScreen(),
       },
     );
   }
