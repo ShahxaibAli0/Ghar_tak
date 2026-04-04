@@ -16,20 +16,25 @@ class SellerBottomNav extends StatefulWidget {
 class _SellerBottomNavState extends State<SellerBottomNav> {
   int _currentIndex = 0;
 
-  final List<Widget> _screens = [
-    const SellerDashboardScreen(),
-    const MyProductsScreen(),
-    const SellerOrdersScreen(),
-    const ShopProfileScreen(),
-    const SellerWalletScreen(),
-  ];
+  void _switchTab(int index) {
+    setState(() => _currentIndex = index);
+  }
 
   @override
   Widget build(BuildContext context) {
+    final List<Widget> screens = [
+      SellerDashboardScreen(onTabSwitch: _switchTab),
+      const MyProductsScreen(),
+      const SellerOrdersScreen(),
+      const ShopProfileScreen(),
+      const SellerWalletScreen(),
+    ];
+
     return Scaffold(
-      body: _screens[_currentIndex],
+      body: screens[_currentIndex],
       bottomNavigationBar: Container(
         decoration: BoxDecoration(
+          color: Colors.white,
           boxShadow: [
             BoxShadow(
               color: Colors.black.withOpacity(0.08),
@@ -40,14 +45,14 @@ class _SellerBottomNavState extends State<SellerBottomNav> {
         ),
         child: BottomNavigationBar(
           currentIndex: _currentIndex,
-          onTap: (index) =>
-              setState(() => _currentIndex = index),
+          onTap: _switchTab,
           type: BottomNavigationBarType.fixed,
           backgroundColor: Colors.white,
           selectedItemColor: SellerColors.primary,
           unselectedItemColor: Colors.grey[400],
           selectedFontSize: 11,
           unselectedFontSize: 11,
+          elevation: 0,
           selectedLabelStyle:
               const TextStyle(fontWeight: FontWeight.bold),
           items: const [
