@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../dashboard/seller_dashboard_screen.dart';
+import 'seller_home_screen.dart';
 import '../products/my_products_screen.dart';
 import '../orders/seller_orders_screen.dart';
 import '../shop/shop_profile_screen.dart';
@@ -23,7 +23,7 @@ class _SellerMainScreenState extends State<SellerMainScreen> {
   @override
   Widget build(BuildContext context) {
     final screens = [
-      SellerDashboardScreen(onTabSwitch: _switchTab),
+      SellerHomeScreen(onTabSwitch: _switchTab),
       const MyProductsScreen(),
       const SellerOrdersScreen(),
       const ShopProfileScreen(),
@@ -46,7 +46,7 @@ class _SellerMainScreenState extends State<SellerMainScreen> {
           BottomNavigationBarItem(
             icon: Icon(Icons.dashboard_outlined),
             activeIcon: Icon(Icons.dashboard),
-            label: 'Dashboard',
+            label: 'Home',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.inventory_2_outlined),

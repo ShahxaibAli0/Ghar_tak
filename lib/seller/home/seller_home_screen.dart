@@ -1,60 +1,53 @@
 import 'package:flutter/material.dart';
 import '../widgets/seller_colors.dart';
-import '../products/add_product_screen.dart';
 import '../notifications/seller_notifications_screen.dart';
-import '../reviews/seller_reviews_screen.dart';
-import '../reports/seller_reports_screen.dart';
+import '../orders/seller_orders_screen.dart';
 
-
-class SellerDashboardScreen extends StatelessWidget {
+class SellerHomeScreen extends StatelessWidget {
   final Function(int)? onTabSwitch;
-  const SellerDashboardScreen({super.key, this.onTabSwitch});
+  const SellerHomeScreen({super.key, this.onTabSwitch});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF6F6F6),
+      backgroundColor: const Color(0xFFF4F6F8),
       body: CustomScrollView(
         slivers: [
-          // ── Header ──
-          SliverToBoxAdapter(child: _buildHeader(context)),
-
-          // ── Quick Actions (FIXED horizontal scroll) ──
-          SliverPersistentHeader(
-            pinned: true,
-            delegate: _QuickActionsDelegate(
-              child: _buildQuickActions(context),
-            ),
-          ),
-
-          // ── Body Content ──
           SliverToBoxAdapter(
-            child: Column(
-              children: [
-                const SizedBox(height: 16),
-                _buildStatsCards(),
-                const SizedBox(height: 16),
-                _buildOrderStatus(),
-                const SizedBox(height: 16),
-                _buildRecentOrders(),
-                const SizedBox(height: 24),
-              ],
-            ),
-          ),
+              child: _buildHeader(context)),
+          SliverToBoxAdapter(
+              child: _buildQuickActions(context)),
+          SliverToBoxAdapter(
+              child: _buildOverviewCards()),
+          SliverToBoxAdapter(
+              child: _buildOrderStatus(context)),
+          SliverToBoxAdapter(
+              child: _buildRecentOrders(context)),
+          const SliverToBoxAdapter(
+              child: SizedBox(height: 30)),
         ],
       ),
     );
   }
 
   // ═══════════════════════════════
-  // HEADER
+  // LUXURY GRADIENT HEADER
   // ═══════════════════════════════
   Widget _buildHeader(BuildContext context) {
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.fromLTRB(20, 55, 20, 24),
+      padding: const EdgeInsets.fromLTRB(20, 56, 20, 28),
       decoration: const BoxDecoration(
-        color: SellerColors.primary,
+        gradient: LinearGradient(
+          colors: [
+            Color(0xFF004D2C),
+            Color(0xFF00703F),
+            Color(0xFF00A651),
+            Color(0xFF43C97E),
+          ],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
         borderRadius: BorderRadius.only(
           bottomLeft: Radius.circular(28),
           bottomRight: Radius.circular(28),
@@ -62,28 +55,46 @@ class SellerDashboardScreen extends StatelessWidget {
       ),
       child: Column(
         children: [
-          // Top Row
+          // ── Top Row ──
           Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            mainAxisAlignment:
+                MainAxisAlignment.spaceBetween,
             children: [
-              const Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+              Column(
+                crossAxisAlignment:
+                    CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    'Seller Center',
-                    style: TextStyle(
-                      color: Colors.white70,
-                      fontSize: 13,
-                      letterSpacing: 0.5,
-                    ),
+                  Row(
+                    children: [
+                      Container(
+                        width: 6,
+                        height: 6,
+                        decoration: const BoxDecoration(
+                          color: Color(0xFF43C97E),
+                          shape: BoxShape.circle,
+                        ),
+                      ),
+                      const SizedBox(width: 5),
+                      Text(
+                        'SELLER CENTER',
+                        style: TextStyle(
+                          color: Colors.white
+                              .withOpacity(0.75),
+                          fontSize: 10,
+                          fontWeight: FontWeight.w600,
+                          letterSpacing: 1.5,
+                        ),
+                      ),
+                    ],
                   ),
-                  SizedBox(height: 4),
-                  Text(
+                  const SizedBox(height: 5),
+                  const Text(
                     'Ahmed Electronics',
                     style: TextStyle(
                       color: Colors.white,
                       fontSize: 20,
                       fontWeight: FontWeight.bold,
+                      letterSpacing: 0.3,
                     ),
                   ),
                 ],
@@ -95,53 +106,69 @@ class SellerDashboardScreen extends StatelessWidget {
                     onTap: () => Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (_) =>
-                            const SellerNotificationsScreen(),
+                        builder: (_) => const
+                            SellerNotificationsScreen(),
                       ),
                     ),
-                    child: Container(
-                      padding: const EdgeInsets.all(9),
-                      decoration: BoxDecoration(
-                        color: Colors.white.withOpacity(0.18),
-                        shape: BoxShape.circle,
-                      ),
-                      child: Stack(
-                        clipBehavior: Clip.none,
-                        children: [
-                          const Icon(
+                    child: Stack(
+                      clipBehavior: Clip.none,
+                      children: [
+                        Container(
+                          padding:
+                              const EdgeInsets.all(9),
+                          decoration: BoxDecoration(
+                            color: Colors.white
+                                .withOpacity(0.15),
+                            shape: BoxShape.circle,
+                            border: Border.all(
+                              color: Colors.white
+                                  .withOpacity(0.25),
+                              width: 1,
+                            ),
+                          ),
+                          child: const Icon(
                             Icons.notifications_outlined,
                             color: Colors.white,
-                            size: 22,
+                            size: 21,
                           ),
-                          Positioned(
-                            right: -1,
-                            top: -1,
-                            child: Container(
-                              width: 9,
-                              height: 9,
-                              decoration: BoxDecoration(
-                                color: Colors.red,
-                                shape: BoxShape.circle,
-                                border: Border.all(
-                                    color: SellerColors.primary,
-                                    width: 1.5),
+                        ),
+                        Positioned(
+                          right: 0,
+                          top: 0,
+                          child: Container(
+                            width: 10,
+                            height: 10,
+                            decoration: BoxDecoration(
+                              color: Colors.red[400],
+                              shape: BoxShape.circle,
+                              border: Border.all(
+                                color: const Color(
+                                    0xFF00703F),
+                                width: 1.5,
                               ),
                             ),
                           ),
-                        ],
-                      ),
+                        ),
+                      ],
                     ),
                   ),
                   const SizedBox(width: 10),
                   // Avatar
-                  CircleAvatar(
-                    radius: 21,
-                    backgroundColor:
-                        Colors.white.withOpacity(0.22),
-                    child: const Icon(
-                      Icons.person,
-                      color: Colors.white,
-                      size: 22,
+                  Container(
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      border: Border.all(
+                        color:
+                            Colors.white.withOpacity(0.4),
+                        width: 2,
+                      ),
+                    ),
+                    child: CircleAvatar(
+                      radius: 20,
+                      backgroundColor:
+                          Colors.white.withOpacity(0.18),
+                      child: const Icon(Icons.person,
+                          color: Colors.white, size: 21),
                     ),
                   ),
                 ],
@@ -149,26 +176,41 @@ class SellerDashboardScreen extends StatelessWidget {
             ],
           ),
 
-          const SizedBox(height: 20),
+          const SizedBox(height: 22),
 
-          // Earnings Row
+          // ── Earnings Row ──
           Container(
             padding: const EdgeInsets.symmetric(
-                horizontal: 16, vertical: 14),
+                horizontal: 6, vertical: 16),
             decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.15),
-              borderRadius: BorderRadius.circular(16),
+              color: Colors.black.withOpacity(0.12),
+              borderRadius: BorderRadius.circular(18),
               border: Border.all(
-                  color: Colors.white.withOpacity(0.25)),
+                color: Colors.white.withOpacity(0.15),
+                width: 1,
+              ),
             ),
             child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              mainAxisAlignment:
+                  MainAxisAlignment.spaceAround,
               children: [
-                _headerStat('Total Earnings', 'Rs. 45,200'),
-                _vLine(),
-                _headerStat('This Month', 'Rs. 12,800'),
-                _vLine(),
-                _headerStat('Pending', 'Rs. 3,400'),
+                _earningItem(
+                  'Today',
+                  'Rs. 4,300',
+                  Icons.wb_sunny_outlined,
+                ),
+                _vDivider(),
+                _earningItem(
+                  'This Month',
+                  'Rs. 12,800',
+                  Icons.calendar_month_outlined,
+                ),
+                _vDivider(),
+                _earningItem(
+                  'Total',
+                  'Rs. 45,200',
+                  Icons.account_balance_wallet_outlined,
+                ),
               ],
             ),
           ),
@@ -177,22 +219,28 @@ class SellerDashboardScreen extends StatelessWidget {
     );
   }
 
-  Widget _headerStat(String label, String value) {
+  Widget _earningItem(
+      String label, String value, IconData icon) {
     return Column(
       children: [
+        Icon(icon,
+            color: Colors.white.withOpacity(0.7),
+            size: 15),
+        const SizedBox(height: 5),
         Text(
           value,
           style: const TextStyle(
             color: Colors.white,
-            fontSize: 14,
+            fontSize: 13,
             fontWeight: FontWeight.bold,
+            letterSpacing: 0.2,
           ),
         ),
         const SizedBox(height: 3),
         Text(
           label,
           style: TextStyle(
-            color: Colors.white.withOpacity(0.72),
+            color: Colors.white.withOpacity(0.65),
             fontSize: 10,
           ),
         ),
@@ -200,11 +248,21 @@ class SellerDashboardScreen extends StatelessWidget {
     );
   }
 
-  Widget _vLine() {
+  Widget _vDivider() {
     return Container(
-      height: 32,
+      height: 36,
       width: 1,
-      color: Colors.white.withOpacity(0.28),
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          colors: [
+            Colors.transparent,
+            Colors.white.withOpacity(0.3),
+            Colors.transparent,
+          ],
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+        ),
+      ),
     );
   }
 
@@ -213,98 +271,91 @@ class SellerDashboardScreen extends StatelessWidget {
   // ═══════════════════════════════
   Widget _buildQuickActions(BuildContext context) {
     final actions = [
-      _ActionItem('Add Product', Icons.add_box_outlined,
-          const Color(0xFF00A651), () {
+      _Action('Notifications',
+          Icons.notifications_outlined,
+          const Color(0xFF5C6BC0), () {
         Navigator.push(
           context,
           MaterialPageRoute(
-              builder: (_) => const AddProductScreen()),
+            builder: (_) =>
+                const SellerNotificationsScreen(),
+          ),
         );
       }),
-      _ActionItem('My Products', Icons.inventory_2_outlined,
-          Colors.orange, () {
-        onTabSwitch?.call(1);
-      }),
-      _ActionItem('Orders', Icons.receipt_long_outlined,
+      _Action('All Orders',
+          Icons.receipt_long_outlined,
           Colors.blue, () {
-        onTabSwitch?.call(2);
-      }),
-      _ActionItem('Reports', Icons.bar_chart_outlined,
-          Colors.teal, () {
         Navigator.push(
           context,
           MaterialPageRoute(
-              builder: (_) => const SellerReportsScreen()),
+            builder: (_) => const SellerOrdersScreen(),
+          ),
         );
       }),
-      _ActionItem('Reviews', Icons.star_outline,
-          Colors.amber, () {
+      _Action('Pending',
+          Icons.hourglass_top_outlined,
+          Colors.orange, () {
         Navigator.push(
           context,
           MaterialPageRoute(
-              builder: (_) => const SellerReviewsScreen()),
+            builder: (_) => const SellerOrdersScreen(),
+          ),
         );
       }),
-      _ActionItem('Notifications', Icons.notifications_outlined,
-          Colors.purple, () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-              builder: (_) =>
-                  const SellerNotificationsScreen()),
-        );
-      }),
-      _ActionItem('Shop', Icons.store_outlined,
-          Colors.brown, () {
-        onTabSwitch?.call(3);
-      }),
-      _ActionItem('Wallet', Icons.account_balance_wallet_outlined,
-          Colors.green, () {
-        onTabSwitch?.call(4);
-      }),
+      _Action('Tools',
+          Icons.storefront_outlined,
+          SellerColors.primary,
+          () => onTabSwitch?.call(1)),
+      _Action('Chats',
+          Icons.chat_bubble_outline,
+          Colors.purple,
+          () => onTabSwitch?.call(2)),
+      _Action('My Shop',
+          Icons.store_outlined,
+          Colors.teal,
+          () => onTabSwitch?.call(3)),
     ];
 
-    return Container(
-      color: const Color(0xFFF6F6F6),
-      padding: const EdgeInsets.symmetric(vertical: 12),
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(0, 20, 0, 0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisSize: MainAxisSize.min,
         children: [
           const Padding(
-            padding: EdgeInsets.fromLTRB(16, 0, 16, 10),
+            padding: EdgeInsets.fromLTRB(16, 0, 16, 12),
             child: Text(
-              'Quick Actions',
+              'Quick Access',
               style: TextStyle(
-                fontWeight: FontWeight.bold,
                 fontSize: 14,
+                fontWeight: FontWeight.bold,
                 color: SellerColors.darkText,
               ),
             ),
           ),
           SizedBox(
-            height: 82,
+            height: 92,
             child: ListView.builder(
               scrollDirection: Axis.horizontal,
-              padding:
-                  const EdgeInsets.symmetric(horizontal: 12),
+              padding: const EdgeInsets.symmetric(
+                  horizontal: 12),
               itemCount: actions.length,
-              itemBuilder: (context, index) {
-                final a = actions[index];
+              itemBuilder: (context, i) {
+                final a = actions[i];
                 return GestureDetector(
                   onTap: a.onTap,
                   child: Container(
-                    width: 68,
+                    width: 72,
                     margin: const EdgeInsets.symmetric(
-                        horizontal: 4),
+                        horizontal: 5),
                     decoration: BoxDecoration(
                       color: Colors.white,
-                      borderRadius: BorderRadius.circular(14),
+                      borderRadius:
+                          BorderRadius.circular(16),
                       boxShadow: [
                         BoxShadow(
                           color: Colors.black
                               .withOpacity(0.05),
-                          blurRadius: 6,
+                          blurRadius: 8,
                           offset: const Offset(0, 2),
                         ),
                       ],
@@ -314,16 +365,17 @@ class SellerDashboardScreen extends StatelessWidget {
                           MainAxisAlignment.center,
                       children: [
                         Container(
-                          padding: const EdgeInsets.all(9),
+                          padding:
+                              const EdgeInsets.all(10),
                           decoration: BoxDecoration(
-                            color:
-                                a.color.withOpacity(0.12),
+                            color: a.color
+                                .withOpacity(0.12),
                             shape: BoxShape.circle,
                           ),
                           child: Icon(a.icon,
                               color: a.color, size: 20),
                         ),
-                        const SizedBox(height: 6),
+                        const SizedBox(height: 7),
                         Text(
                           a.label,
                           textAlign: TextAlign.center,
@@ -331,7 +383,7 @@ class SellerDashboardScreen extends StatelessWidget {
                           overflow: TextOverflow.ellipsis,
                           style: const TextStyle(
                             fontSize: 10,
-                            fontWeight: FontWeight.w600,
+                            fontWeight: FontWeight.w500,
                             color: SellerColors.darkText,
                           ),
                         ),
@@ -348,29 +400,62 @@ class SellerDashboardScreen extends StatelessWidget {
   }
 
   // ═══════════════════════════════
-  // STATS CARDS
+  // OVERVIEW CARDS
   // ═══════════════════════════════
-  Widget _buildStatsCards() {
+  Widget _buildOverviewCards() {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16),
-      child: GridView.count(
-        crossAxisCount: 2,
-        crossAxisSpacing: 12,
-        mainAxisSpacing: 12,
-        shrinkWrap: true,
-        physics: const NeverScrollableScrollPhysics(),
-        childAspectRatio: 1.6,
+      padding: const EdgeInsets.fromLTRB(16, 20, 16, 0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          _statCard('Total Orders', '248',
-              Icons.receipt_long, Colors.blue, '+12 today'),
-          _statCard('Total Products', '56',
-              Icons.inventory_2, Colors.orange,
-              '4 out of stock'),
-          _statCard('Delivered', '210',
-              Icons.check_circle, Colors.green,
-              '85% success'),
-          _statCard('Cancelled', '14',
-              Icons.cancel, Colors.red, '5.6% rate'),
+          const Text(
+            'Overview',
+            style: TextStyle(
+              fontSize: 14,
+              fontWeight: FontWeight.bold,
+              color: SellerColors.darkText,
+            ),
+          ),
+          const SizedBox(height: 12),
+          GridView.count(
+            crossAxisCount: 2,
+            crossAxisSpacing: 12,
+            mainAxisSpacing: 12,
+            shrinkWrap: true,
+            physics:
+                const NeverScrollableScrollPhysics(),
+            childAspectRatio: 1.65,
+            children: [
+              _statCard(
+                'Total Orders',
+                '248',
+                Icons.receipt_long,
+                Colors.blue,
+                '+12 today',
+              ),
+              _statCard(
+                'Delivered',
+                '210',
+                Icons.check_circle,
+                Colors.green,
+                '85% success',
+              ),
+              _statCard(
+                'Pending',
+                '18',
+                Icons.hourglass_top,
+                Colors.orange,
+                'Action needed',
+              ),
+              _statCard(
+                'Cancelled',
+                '14',
+                Icons.cancel,
+                Colors.red,
+                '5.6% rate',
+              ),
+            ],
+          ),
         ],
       ),
     );
@@ -385,7 +470,7 @@ class SellerDashboardScreen extends StatelessWidget {
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: Colors.black.withOpacity(0.04),
             blurRadius: 8,
             offset: const Offset(0, 2),
           ),
@@ -396,23 +481,24 @@ class SellerDashboardScreen extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            mainAxisAlignment:
+                MainAxisAlignment.spaceBetween,
             children: [
               Text(
                 title,
                 style: const TextStyle(
                   color: SellerColors.subText,
                   fontSize: 11,
-                  fontWeight: FontWeight.w500,
                 ),
               ),
               Container(
-                padding: const EdgeInsets.all(6),
+                padding: const EdgeInsets.all(5),
                 decoration: BoxDecoration(
-                  color: color.withOpacity(0.12),
+                  color: color.withOpacity(0.1),
                   borderRadius: BorderRadius.circular(8),
                 ),
-                child: Icon(icon, color: color, size: 16),
+                child:
+                    Icon(icon, color: color, size: 15),
               ),
             ],
           ),
@@ -423,7 +509,7 @@ class SellerDashboardScreen extends StatelessWidget {
                 value,
                 style: TextStyle(
                   color: color,
-                  fontSize: 24,
+                  fontSize: 22,
                   fontWeight: FontWeight.bold,
                 ),
               ),
@@ -444,9 +530,9 @@ class SellerDashboardScreen extends StatelessWidget {
   // ═══════════════════════════════
   // ORDER STATUS
   // ═══════════════════════════════
-  Widget _buildOrderStatus() {
+  Widget _buildOrderStatus(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16),
+      padding: const EdgeInsets.fromLTRB(16, 18, 16, 0),
       child: Container(
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
@@ -454,7 +540,7 @@ class SellerDashboardScreen extends StatelessWidget {
           borderRadius: BorderRadius.circular(16),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.05),
+              color: Colors.black.withOpacity(0.04),
               blurRadius: 8,
               offset: const Offset(0, 2),
             ),
@@ -463,29 +549,56 @@ class SellerDashboardScreen extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text(
-              'Order Status',
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 14,
-                color: SellerColors.darkText,
-              ),
+            Row(
+              mainAxisAlignment:
+                  MainAxisAlignment.spaceBetween,
+              children: [
+                const Text(
+                  'Order Pipeline',
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 14,
+                    color: SellerColors.darkText,
+                  ),
+                ),
+                GestureDetector(
+                  onTap: () => Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) =>
+                          const SellerOrdersScreen(),
+                    ),
+                  ),
+                  child: const Text(
+                    'View All',
+                    style: TextStyle(
+                      color: SellerColors.primary,
+                      fontSize: 12,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ),
+              ],
             ),
             const SizedBox(height: 16),
             Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              mainAxisAlignment:
+                  MainAxisAlignment.spaceAround,
               children: [
-                _statusItem('Pending', '18',
-                    Colors.orange, Icons.hourglass_top),
-                _arrow(),
-                _statusItem('Processing', '24',
+                _pipelineDot('Pending', '18',
+                    Colors.orange,
+                    Icons.hourglass_top),
+                _pipelineArrow(),
+                _pipelineDot('Processing', '24',
                     Colors.blue, Icons.sync),
-                _arrow(),
-                _statusItem('Shipped', '32',
-                    Colors.purple, Icons.local_shipping),
-                _arrow(),
-                _statusItem('Delivered', '210',
-                    Colors.green, Icons.check_circle),
+                _pipelineArrow(),
+                _pipelineDot('Shipped', '32',
+                    Colors.purple,
+                    Icons.local_shipping),
+                _pipelineArrow(),
+                _pipelineDot('Delivered', '210',
+                    Colors.green,
+                    Icons.check_circle),
               ],
             ),
           ],
@@ -494,7 +607,7 @@ class SellerDashboardScreen extends StatelessWidget {
     );
   }
 
-  Widget _statusItem(String label, String count,
+  Widget _pipelineDot(String label, String count,
       Color color, IconData icon) {
     return Column(
       children: [
@@ -512,10 +625,9 @@ class SellerDashboardScreen extends StatelessWidget {
           style: TextStyle(
             color: color,
             fontWeight: FontWeight.bold,
-            fontSize: 15,
+            fontSize: 14,
           ),
         ),
-        const SizedBox(height: 2),
         Text(
           label,
           style: const TextStyle(
@@ -527,18 +639,18 @@ class SellerDashboardScreen extends StatelessWidget {
     );
   }
 
-  Widget _arrow() {
+  Widget _pipelineArrow() {
     return const Icon(
       Icons.arrow_forward_ios,
       color: Color(0xFFCCCCCC),
-      size: 11,
+      size: 10,
     );
   }
 
   // ═══════════════════════════════
   // RECENT ORDERS
   // ═══════════════════════════════
-  Widget _buildRecentOrders() {
+  Widget _buildRecentOrders(BuildContext context) {
     final orders = [
       {
         'id': '#ORD-1023',
@@ -564,7 +676,7 @@ class SellerDashboardScreen extends StatelessWidget {
     ];
 
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16),
+      padding: const EdgeInsets.fromLTRB(16, 18, 16, 0),
       child: Container(
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
@@ -572,7 +684,7 @@ class SellerDashboardScreen extends StatelessWidget {
           borderRadius: BorderRadius.circular(16),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.05),
+              color: Colors.black.withOpacity(0.04),
               blurRadius: 8,
               offset: const Offset(0, 2),
             ),
@@ -581,7 +693,8 @@ class SellerDashboardScreen extends StatelessWidget {
         child: Column(
           children: [
             Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              mainAxisAlignment:
+                  MainAxisAlignment.spaceBetween,
               children: [
                 const Text(
                   'Recent Orders',
@@ -592,7 +705,13 @@ class SellerDashboardScreen extends StatelessWidget {
                   ),
                 ),
                 GestureDetector(
-                  onTap: () => onTabSwitch?.call(2),
+                  onTap: () => Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) =>
+                          const SellerOrdersScreen(),
+                    ),
+                  ),
                   child: const Text(
                     'See All',
                     style: TextStyle(
@@ -605,14 +724,14 @@ class SellerDashboardScreen extends StatelessWidget {
               ],
             ),
             const SizedBox(height: 14),
-            ...orders.map((order) => _orderTile(order)),
+            ...orders.map((o) => _orderRow(o)),
           ],
         ),
       ),
     );
   }
 
-  Widget _orderTile(Map order) {
+  Widget _orderRow(Map order) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 12),
       child: Row(
@@ -623,16 +742,14 @@ class SellerDashboardScreen extends StatelessWidget {
               color: SellerColors.lightGreen,
               borderRadius: BorderRadius.circular(10),
             ),
-            child: const Icon(
-              Icons.shopping_bag,
-              color: SellerColors.primary,
-              size: 18,
-            ),
+            child: const Icon(Icons.shopping_bag,
+                color: SellerColors.primary, size: 18),
           ),
           const SizedBox(width: 12),
           Expanded(
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+              crossAxisAlignment:
+                  CrossAxisAlignment.start,
               children: [
                 Text(
                   order['name'],
@@ -669,8 +786,9 @@ class SellerDashboardScreen extends StatelessWidget {
                     horizontal: 8, vertical: 3),
                 decoration: BoxDecoration(
                   color: (order['color'] as Color)
-                      .withOpacity(0.12),
-                  borderRadius: BorderRadius.circular(20),
+                      .withOpacity(0.1),
+                  borderRadius:
+                      BorderRadius.circular(20),
                 ),
                 child: Text(
                   order['status'],
@@ -689,35 +807,11 @@ class SellerDashboardScreen extends StatelessWidget {
   }
 }
 
-// ═══════════════════════════════
-// Action Item Model
-// ═══════════════════════════════
-class _ActionItem {
+// ── Action Model ──
+class _Action {
   final String label;
   final IconData icon;
   final Color color;
   final VoidCallback onTap;
-  _ActionItem(this.label, this.icon, this.color, this.onTap);
-}
-
-// ═══════════════════════════════
-// Pinned Quick Actions Delegate
-// ═══════════════════════════════
-class _QuickActionsDelegate extends SliverPersistentHeaderDelegate {
-  final Widget child;
-  _QuickActionsDelegate({required this.child});
-
-  @override
-  double get minExtent => 110;
-  @override
-  double get maxExtent => 110;
-
-  @override
-  Widget build(BuildContext context,
-      double shrinkOffset, bool overlapsContent) {
-    return child;
-  }
-
-  @override
-  bool shouldRebuild(_QuickActionsDelegate oldDelegate) => true;
+  _Action(this.label, this.icon, this.color, this.onTap);
 }

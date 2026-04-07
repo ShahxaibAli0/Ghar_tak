@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import '../widgets/seller_colors.dart';
 import 'seller_register_screen.dart';
-import '../dashboard/seller_main_screen.dart';
+import '../home/seller_main_screen.dart';
 
 class SellerLoginScreen extends StatefulWidget {
   const SellerLoginScreen({super.key});
