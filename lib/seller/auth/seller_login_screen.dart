@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import '../widgets/seller_colors.dart';
 import 'seller_register_screen.dart';
-import '../home/seller_home_screen.dart';
 
 class SellerLoginScreen extends StatefulWidget {
   const SellerLoginScreen({super.key});
@@ -158,11 +157,9 @@ class _SellerLoginScreenState extends State<SellerLoginScreen> {
                         ),
                         onPressed: () {
                           if (_formKey.currentState!.validate()) {
-                            Navigator.pushReplacement(
+                            Navigator.pushReplacementNamed(
                               context,
-                              MaterialPageRoute(
-                                  builder: (_) =>
-                                      const SellerHomeScreen()),
+                              '/seller-home',
                             );
                           }
                         },

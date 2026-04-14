@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
-import 'seller_colors.dart';
-import '../home/seller_home_screen.dart';
-import '../tools/seller_tools_screen.dart';
-import '../chats/seller_chats_screen.dart';
-import '../me/seller_me_screen.dart';
+import '../widgets/seller_colors.dart';
+import '../dashboard/seller_dashboard_screen.dart';
+import '../products/my_products_screen.dart';
+import '../orders/seller_orders_screen.dart';
+import '../shop/shop_profile_screen.dart';
+import '../wallet/seller_wallet_screen.dart';
 
 class SellerBottomNav extends StatefulWidget {
   const SellerBottomNav({super.key});
 
   @override
-  State<SellerBottomNav> createState() =>
-      _SellerBottomNavState();
+  State<SellerBottomNav> createState() => _SellerBottomNavState();
 }
 
 class _SellerBottomNavState extends State<SellerBottomNav> {
@@ -23,90 +23,63 @@ class _SellerBottomNavState extends State<SellerBottomNav> {
   @override
   Widget build(BuildContext context) {
     final List<Widget> screens = [
-      SellerHomeScreen(onTabSwitch: _switchTab),
-      const SellerToolsScreen(),
-      const SellerChatsScreen(),
-      const SellerMeScreen(),
+      SellerDashboardScreen(onTabSwitch: _switchTab),
+      const MyProductsScreen(),
+      const SellerOrdersScreen(),
+      const ShopProfileScreen(),
+      const SellerWalletScreen(),
     ];
 
     return Scaffold(
-      body: IndexedStack(
-        index: _currentIndex,
-        children: screens,
-      ),
+      body: screens[_currentIndex],
       bottomNavigationBar: Container(
         decoration: BoxDecoration(
           color: Colors.white,
           boxShadow: [
             BoxShadow(
               color: Colors.black.withOpacity(0.08),
-              blurRadius: 16,
-              offset: const Offset(0, -2),
+              blurRadius: 12,
+              offset: const Offset(0, -3),
             ),
           ],
         ),
-        child: SafeArea(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(
-                horizontal: 8, vertical: 8),
-            child: Row(
-              mainAxisAlignment:
-                  MainAxisAlignment.spaceAround,
-              children: [
-                _navItem(0, Icons.home_outlined,
-                    Icons.home, 'Home'),
-                _navItem(1, Icons.storefront_outlined,
-                    Icons.storefront, 'Tools'),
-                _navItem(2, Icons.chat_bubble_outline,
-                    Icons.chat_bubble, 'Chats'),
-                _navItem(3, Icons.person_outline,
-                    Icons.person, 'Me'),
-              ],
+        child: BottomNavigationBar(
+          currentIndex: _currentIndex,
+          onTap: _switchTab,
+          type: BottomNavigationBarType.fixed,
+          backgroundColor: Colors.white,
+          selectedItemColor: SellerColors.primary,
+          unselectedItemColor: Colors.grey[400],
+          selectedFontSize: 11,
+          unselectedFontSize: 11,
+          elevation: 0,
+          selectedLabelStyle:
+              const TextStyle(fontWeight: FontWeight.bold),
+          items: const [
+            BottomNavigationBarItem(
+              icon: Icon(Icons.dashboard_outlined),
+              activeIcon: Icon(Icons.dashboard),
+              label: 'Dashboard',
             ),
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _navItem(int index, IconData outlineIcon,
-      IconData filledIcon, String label) {
-    final bool selected = _currentIndex == index;
-    return GestureDetector(
-      onTap: () => _switchTab(index),
-      behavior: HitTestBehavior.opaque,
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 200),
-        padding: const EdgeInsets.symmetric(
-            horizontal: 20, vertical: 8),
-        decoration: BoxDecoration(
-          color: selected
-              ? SellerColors.primary.withOpacity(0.1)
-              : Colors.transparent,
-          borderRadius: BorderRadius.circular(14),
-        ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(
-              selected ? filledIcon : outlineIcon,
-              color: selected
-                  ? SellerColors.primary
-                  : Colors.grey[400],
-              size: 24,
+            BottomNavigationBarItem(
+              icon: Icon(Icons.inventory_2_outlined),
+              activeIcon: Icon(Icons.inventory_2),
+              label: 'Products',
             ),
-            const SizedBox(height: 4),
-            Text(
-              label,
-              style: TextStyle(
-                color: selected
-                    ? SellerColors.primary
-                    : Colors.grey[400],
-                fontSize: 11,
-                fontWeight: selected
-                    ? FontWeight.bold
-                    : FontWeight.normal,
-              ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.receipt_long_outlined),
+              activeIcon: Icon(Icons.receipt_long),
+              label: 'Orders',
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.store_outlined),
+              activeIcon: Icon(Icons.store),
+              label: 'Shop',
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.account_balance_wallet_outlined),
+              activeIcon: Icon(Icons.account_balance_wallet),
+              label: 'Wallet',
             ),
           ],
         ),
