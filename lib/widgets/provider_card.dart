@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import '../models/provider_model.dart';
-import '../screens/providers/provider_profile_screen.dart';
 
 class Offer {
   final String title;
