@@ -16,8 +16,6 @@ class SellerHomeScreen extends StatelessWidget {
           SliverToBoxAdapter(
               child: _buildHeader(context)),
           SliverToBoxAdapter(
-              child: _buildQuickActions(context)),
-          SliverToBoxAdapter(
               child: _buildOverviewCards()),
           SliverToBoxAdapter(
               child: _buildOrderStatus(context)),
@@ -268,139 +266,6 @@ class SellerHomeScreen extends StatelessWidget {
 
   // ═══════════════════════════════
   // QUICK ACTIONS — Horizontal Scroll
-  // ═══════════════════════════════
-  Widget _buildQuickActions(BuildContext context) {
-    final actions = [
-      _Action('Notifications',
-          Icons.notifications_outlined,
-          const Color(0xFF5C6BC0), () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (_) =>
-                const SellerNotificationsScreen(),
-          ),
-        );
-      }),
-      _Action('All Orders',
-          Icons.receipt_long_outlined,
-          Colors.blue, () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (_) => const SellerOrdersScreen(),
-          ),
-        );
-      }),
-      _Action('Pending',
-          Icons.hourglass_top_outlined,
-          Colors.orange, () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (_) => const SellerOrdersScreen(),
-          ),
-        );
-      }),
-      _Action('Tools',
-          Icons.storefront_outlined,
-          SellerColors.primary,
-          () => onTabSwitch?.call(1)),
-      _Action('Chats',
-          Icons.chat_bubble_outline,
-          Colors.purple,
-          () => onTabSwitch?.call(2)),
-      _Action('My Shop',
-          Icons.store_outlined,
-          Colors.teal,
-          () => onTabSwitch?.call(3)),
-    ];
-
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(0, 20, 0, 0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const Padding(
-            padding: EdgeInsets.fromLTRB(16, 0, 16, 12),
-            child: Text(
-              'Quick Access',
-              style: TextStyle(
-                fontSize: 14,
-                fontWeight: FontWeight.bold,
-                color: SellerColors.darkText,
-              ),
-            ),
-          ),
-          SizedBox(
-            height: 92,
-            child: ListView.builder(
-              scrollDirection: Axis.horizontal,
-              padding: const EdgeInsets.symmetric(
-                  horizontal: 12),
-              itemCount: actions.length,
-              itemBuilder: (context, i) {
-                final a = actions[i];
-                return GestureDetector(
-                  onTap: a.onTap,
-                  child: Container(
-                    width: 72,
-                    margin: const EdgeInsets.symmetric(
-                        horizontal: 5),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius:
-                          BorderRadius.circular(16),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black
-                              .withOpacity(0.05),
-                          blurRadius: 8,
-                          offset: const Offset(0, 2),
-                        ),
-                      ],
-                    ),
-                    child: Column(
-                      mainAxisAlignment:
-                          MainAxisAlignment.center,
-                      children: [
-                        Container(
-                          padding:
-                              const EdgeInsets.all(10),
-                          decoration: BoxDecoration(
-                            color: a.color
-                                .withOpacity(0.12),
-                            shape: BoxShape.circle,
-                          ),
-                          child: Icon(a.icon,
-                              color: a.color, size: 20),
-                        ),
-                        const SizedBox(height: 7),
-                        Text(
-                          a.label,
-                          textAlign: TextAlign.center,
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          style: const TextStyle(
-                            fontSize: 10,
-                            fontWeight: FontWeight.w500,
-                            color: SellerColors.darkText,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                );
-              },
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  // ═══════════════════════════════
-  // OVERVIEW CARDS
   // ═══════════════════════════════
   Widget _buildOverviewCards() {
     return Padding(
@@ -807,11 +672,3 @@ class SellerHomeScreen extends StatelessWidget {
   }
 }
 
-// ── Action Model ──
-class _Action {
-  final String label;
-  final IconData icon;
-  final Color color;
-  final VoidCallback onTap;
-  _Action(this.label, this.icon, this.color, this.onTap);
-}
