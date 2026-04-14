@@ -13,7 +13,8 @@ class SellerBottomNav extends StatefulWidget {
       _SellerBottomNavState();
 }
 
-class _SellerBottomNavState extends State<SellerBottomNav> {
+class _SellerBottomNavState
+    extends State<SellerBottomNav> {
   int _currentIndex = 0;
 
   void _switchTab(int index) {
@@ -24,7 +25,7 @@ class _SellerBottomNavState extends State<SellerBottomNav> {
   Widget build(BuildContext context) {
     final List<Widget> screens = [
       SellerHomeScreen(onTabSwitch: _switchTab),
-      const SellerToolsScreen(),
+      SellerToolsScreen(onTabSwitch: _switchTab),
       const SellerChatsScreen(),
       const SellerMeScreen(),
     ];
@@ -34,78 +35,107 @@ class _SellerBottomNavState extends State<SellerBottomNav> {
         index: _currentIndex,
         children: screens,
       ),
-      bottomNavigationBar: Container(
-        decoration: BoxDecoration(
-          color: Colors.white,
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.08),
-              blurRadius: 16,
-              offset: const Offset(0, -2),
-            ),
-          ],
-        ),
-        child: SafeArea(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(
-                horizontal: 8, vertical: 8),
-            child: Row(
-              mainAxisAlignment:
-                  MainAxisAlignment.spaceAround,
-              children: [
-                _navItem(0, Icons.home_outlined,
-                    Icons.home, 'Home'),
-                _navItem(1, Icons.storefront_outlined,
-                    Icons.storefront, 'Tools'),
-                _navItem(2, Icons.chat_bubble_outline,
-                    Icons.chat_bubble, 'Chats'),
-                _navItem(3, Icons.person_outline,
-                    Icons.person, 'Me'),
-              ],
-            ),
+      bottomNavigationBar: _buildBottomNav(),
+    );
+  }
+
+  Widget _buildBottomNav() {
+    return Container(
+      height: 70,
+      decoration: BoxDecoration(
+        color: Colors.white,
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.09),
+            blurRadius: 16,
+            offset: const Offset(0, -3),
           ),
-        ),
+        ],
+      ),
+      child: Row(
+        mainAxisAlignment:
+            MainAxisAlignment.spaceAround,
+        children: [
+          _navItem(
+            index: 0,
+            outlineIcon: Icons.home_outlined,
+            filledIcon: Icons.home_rounded,
+            label: 'Home',
+          ),
+          _navItem(
+            index: 1,
+            outlineIcon: Icons.storefront_outlined,
+            filledIcon: Icons.storefront_rounded,
+            label: 'Tools',
+          ),
+          _navItem(
+            index: 2,
+            outlineIcon:
+                Icons.chat_bubble_outline_rounded,
+            filledIcon: Icons.chat_bubble_rounded,
+            label: 'Chats',
+          ),
+          _navItem(
+            index: 3,
+            outlineIcon:
+                Icons.person_outline_rounded,
+            filledIcon: Icons.person_rounded,
+            label: 'Me',
+          ),
+        ],
       ),
     );
   }
 
-  Widget _navItem(int index, IconData outlineIcon,
-      IconData filledIcon, String label) {
+  Widget _navItem({
+    required int index,
+    required IconData outlineIcon,
+    required IconData filledIcon,
+    required String label,
+  }) {
     final bool selected = _currentIndex == index;
+
     return GestureDetector(
       onTap: () => _switchTab(index),
       behavior: HitTestBehavior.opaque,
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 200),
-        padding: const EdgeInsets.symmetric(
-            horizontal: 20, vertical: 8),
-        decoration: BoxDecoration(
-          color: selected
-              ? SellerColors.primary.withOpacity(0.1)
-              : Colors.transparent,
-          borderRadius: BorderRadius.circular(14),
-        ),
+      child: SizedBox(
+        width: 80,
+        height: 70,
         child: Column(
-          mainAxisSize: MainAxisSize.min,
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(
-              selected ? filledIcon : outlineIcon,
-              color: selected
-                  ? SellerColors.primary
-                  : Colors.grey[400],
-              size: 24,
+            AnimatedContainer(
+              duration:
+                  const Duration(milliseconds: 200),
+              padding: const EdgeInsets.symmetric(
+                  horizontal: 16, vertical: 5),
+              decoration: BoxDecoration(
+                color: selected
+                    ? SellerColors.primary
+                        .withOpacity(0.12)
+                    : Colors.transparent,
+                borderRadius:
+                    BorderRadius.circular(20),
+              ),
+              child: Icon(
+                selected ? filledIcon : outlineIcon,
+                color: selected
+                    ? SellerColors.primary
+                    : SellerColors.subText,
+                size: 24,
+              ),
             ),
-            const SizedBox(height: 4),
+            const SizedBox(height: 3),
             Text(
               label,
               style: TextStyle(
-                color: selected
-                    ? SellerColors.primary
-                    : Colors.grey[400],
                 fontSize: 11,
                 fontWeight: selected
                     ? FontWeight.bold
                     : FontWeight.normal,
+                color: selected
+                    ? SellerColors.primary
+                    : SellerColors.subText,
               ),
             ),
           ],

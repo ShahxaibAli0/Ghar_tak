@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import '../widgets/seller_colors.dart';
 import 'seller_register_screen.dart';
-import '../home/seller_main_screen.dart';
+import '../home/seller_home_screen.dart';
 
 class SellerLoginScreen extends StatefulWidget {
   const SellerLoginScreen({super.key});
@@ -162,7 +162,7 @@ class _SellerLoginScreenState extends State<SellerLoginScreen> {
                               context,
                               MaterialPageRoute(
                                   builder: (_) =>
-                                      const SellerMainScreen()),
+                                      const SellerHomeScreen()),
                             );
                           }
                         },

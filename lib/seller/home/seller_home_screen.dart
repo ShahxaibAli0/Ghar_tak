@@ -16,11 +16,9 @@ class SellerHomeScreen extends StatelessWidget {
           SliverToBoxAdapter(
               child: _buildHeader(context)),
           SliverToBoxAdapter(
-              child: _buildQuickActions(context)),
-          SliverToBoxAdapter(
               child: _buildOverviewCards()),
           SliverToBoxAdapter(
-              child: _buildOrderStatus(context)),
+              child: _buildOrderPipeline(context)),
           SliverToBoxAdapter(
               child: _buildRecentOrders(context)),
           const SliverToBoxAdapter(
@@ -30,20 +28,19 @@ class SellerHomeScreen extends StatelessWidget {
     );
   }
 
-  // ═══════════════════════════════
-  // LUXURY GRADIENT HEADER
-  // ═══════════════════════════════
+  // ═══════════════════════════
+  // HEADER — Soft Green Gradient
+  // ═══════════════════════════
   Widget _buildHeader(BuildContext context) {
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.fromLTRB(20, 56, 20, 28),
+      padding: const EdgeInsets.fromLTRB(20, 56, 20, 26),
       decoration: const BoxDecoration(
         gradient: LinearGradient(
           colors: [
-            Color(0xFF004D2C),
-            Color(0xFF00703F),
+            Color(0xFF007A3D),
             Color(0xFF00A651),
-            Color(0xFF43C97E),
+            Color(0xFF2ECC7A),
           ],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
@@ -55,7 +52,7 @@ class SellerHomeScreen extends StatelessWidget {
       ),
       child: Column(
         children: [
-          // ── Top Row ──
+          // Top Row
           Row(
             mainAxisAlignment:
                 MainAxisAlignment.spaceBetween,
@@ -64,44 +61,28 @@ class SellerHomeScreen extends StatelessWidget {
                 crossAxisAlignment:
                     CrossAxisAlignment.start,
                 children: [
-                  Row(
-                    children: [
-                      Container(
-                        width: 6,
-                        height: 6,
-                        decoration: const BoxDecoration(
-                          color: Color(0xFF43C97E),
-                          shape: BoxShape.circle,
-                        ),
-                      ),
-                      const SizedBox(width: 5),
-                      Text(
-                        'SELLER CENTER',
-                        style: TextStyle(
-                          color: Colors.white
-                              .withOpacity(0.75),
-                          fontSize: 10,
-                          fontWeight: FontWeight.w600,
-                          letterSpacing: 1.5,
-                        ),
-                      ),
-                    ],
+                  Text(
+                    'Seller Center',
+                    style: TextStyle(
+                      color: Colors.white.withOpacity(0.78),
+                      fontSize: 11,
+                      fontWeight: FontWeight.w500,
+                      letterSpacing: 1.2,
+                    ),
                   ),
-                  const SizedBox(height: 5),
+                  const SizedBox(height: 4),
                   const Text(
                     'Ahmed Electronics',
                     style: TextStyle(
                       color: Colors.white,
                       fontSize: 20,
                       fontWeight: FontWeight.bold,
-                      letterSpacing: 0.3,
                     ),
                   ),
                 ],
               ),
               Row(
                 children: [
-                  // Notification Bell
                   GestureDetector(
                     onTap: () => Navigator.push(
                       context,
@@ -118,12 +99,11 @@ class SellerHomeScreen extends StatelessWidget {
                               const EdgeInsets.all(9),
                           decoration: BoxDecoration(
                             color: Colors.white
-                                .withOpacity(0.15),
+                                .withOpacity(0.18),
                             shape: BoxShape.circle,
                             border: Border.all(
                               color: Colors.white
-                                  .withOpacity(0.25),
-                              width: 1,
+                                  .withOpacity(0.3),
                             ),
                           ),
                           child: const Icon(
@@ -136,14 +116,14 @@ class SellerHomeScreen extends StatelessWidget {
                           right: 0,
                           top: 0,
                           child: Container(
-                            width: 10,
-                            height: 10,
+                            width: 9,
+                            height: 9,
                             decoration: BoxDecoration(
                               color: Colors.red[400],
                               shape: BoxShape.circle,
                               border: Border.all(
                                 color: const Color(
-                                    0xFF00703F),
+                                    0xFF00A651),
                                 width: 1.5,
                               ),
                             ),
@@ -153,7 +133,6 @@ class SellerHomeScreen extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(width: 10),
-                  // Avatar
                   Container(
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
@@ -166,7 +145,7 @@ class SellerHomeScreen extends StatelessWidget {
                     child: CircleAvatar(
                       radius: 20,
                       backgroundColor:
-                          Colors.white.withOpacity(0.18),
+                          Colors.white.withOpacity(0.2),
                       child: const Icon(Icons.person,
                           color: Colors.white, size: 21),
                     ),
@@ -176,41 +155,34 @@ class SellerHomeScreen extends StatelessWidget {
             ],
           ),
 
-          const SizedBox(height: 22),
+          const SizedBox(height: 20),
 
-          // ── Earnings Row ──
+          // Earnings Row
           Container(
             padding: const EdgeInsets.symmetric(
-                horizontal: 6, vertical: 16),
+                vertical: 14, horizontal: 6),
             decoration: BoxDecoration(
-              color: Colors.black.withOpacity(0.12),
-              borderRadius: BorderRadius.circular(18),
+              color: Colors.white.withOpacity(0.13),
+              borderRadius: BorderRadius.circular(16),
               border: Border.all(
-                color: Colors.white.withOpacity(0.15),
-                width: 1,
+                color: Colors.white.withOpacity(0.2),
               ),
             ),
             child: Row(
               mainAxisAlignment:
                   MainAxisAlignment.spaceAround,
               children: [
-                _earningItem(
-                  'Today',
-                  'Rs. 4,300',
-                  Icons.wb_sunny_outlined,
-                ),
-                _vDivider(),
-                _earningItem(
-                  'This Month',
-                  'Rs. 12,800',
-                  Icons.calendar_month_outlined,
-                ),
-                _vDivider(),
-                _earningItem(
-                  'Total',
-                  'Rs. 45,200',
-                  Icons.account_balance_wallet_outlined,
-                ),
+                _earningTile(
+                    'Today', 'Rs. 4,300',
+                    Icons.wb_sunny_outlined),
+                _vLine(),
+                _earningTile(
+                    'This Month', 'Rs. 12,800',
+                    Icons.calendar_month_outlined),
+                _vLine(),
+                _earningTile(
+                    'Total', 'Rs. 45,200',
+                    Icons.account_balance_wallet_outlined),
               ],
             ),
           ),
@@ -219,13 +191,13 @@ class SellerHomeScreen extends StatelessWidget {
     );
   }
 
-  Widget _earningItem(
+  Widget _earningTile(
       String label, String value, IconData icon) {
     return Column(
       children: [
         Icon(icon,
-            color: Colors.white.withOpacity(0.7),
-            size: 15),
+            color: Colors.white.withOpacity(0.72),
+            size: 14),
         const SizedBox(height: 5),
         Text(
           value,
@@ -233,14 +205,13 @@ class SellerHomeScreen extends StatelessWidget {
             color: Colors.white,
             fontSize: 13,
             fontWeight: FontWeight.bold,
-            letterSpacing: 0.2,
           ),
         ),
-        const SizedBox(height: 3),
+        const SizedBox(height: 2),
         Text(
           label,
           style: TextStyle(
-            color: Colors.white.withOpacity(0.65),
+            color: Colors.white.withOpacity(0.68),
             fontSize: 10,
           ),
         ),
@@ -248,160 +219,17 @@ class SellerHomeScreen extends StatelessWidget {
     );
   }
 
-  Widget _vDivider() {
+  Widget _vLine() {
     return Container(
-      height: 36,
+      height: 34,
       width: 1,
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          colors: [
-            Colors.transparent,
-            Colors.white.withOpacity(0.3),
-            Colors.transparent,
-          ],
-          begin: Alignment.topCenter,
-          end: Alignment.bottomCenter,
-        ),
-      ),
+      color: Colors.white.withOpacity(0.25),
     );
   }
 
-  // ═══════════════════════════════
-  // QUICK ACTIONS — Horizontal Scroll
-  // ═══════════════════════════════
-  Widget _buildQuickActions(BuildContext context) {
-    final actions = [
-      _Action('Notifications',
-          Icons.notifications_outlined,
-          const Color(0xFF5C6BC0), () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (_) =>
-                const SellerNotificationsScreen(),
-          ),
-        );
-      }),
-      _Action('All Orders',
-          Icons.receipt_long_outlined,
-          Colors.blue, () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (_) => const SellerOrdersScreen(),
-          ),
-        );
-      }),
-      _Action('Pending',
-          Icons.hourglass_top_outlined,
-          Colors.orange, () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (_) => const SellerOrdersScreen(),
-          ),
-        );
-      }),
-      _Action('Tools',
-          Icons.storefront_outlined,
-          SellerColors.primary,
-          () => onTabSwitch?.call(1)),
-      _Action('Chats',
-          Icons.chat_bubble_outline,
-          Colors.purple,
-          () => onTabSwitch?.call(2)),
-      _Action('My Shop',
-          Icons.store_outlined,
-          Colors.teal,
-          () => onTabSwitch?.call(3)),
-    ];
-
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(0, 20, 0, 0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const Padding(
-            padding: EdgeInsets.fromLTRB(16, 0, 16, 12),
-            child: Text(
-              'Quick Access',
-              style: TextStyle(
-                fontSize: 14,
-                fontWeight: FontWeight.bold,
-                color: SellerColors.darkText,
-              ),
-            ),
-          ),
-          SizedBox(
-            height: 92,
-            child: ListView.builder(
-              scrollDirection: Axis.horizontal,
-              padding: const EdgeInsets.symmetric(
-                  horizontal: 12),
-              itemCount: actions.length,
-              itemBuilder: (context, i) {
-                final a = actions[i];
-                return GestureDetector(
-                  onTap: a.onTap,
-                  child: Container(
-                    width: 72,
-                    margin: const EdgeInsets.symmetric(
-                        horizontal: 5),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius:
-                          BorderRadius.circular(16),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black
-                              .withOpacity(0.05),
-                          blurRadius: 8,
-                          offset: const Offset(0, 2),
-                        ),
-                      ],
-                    ),
-                    child: Column(
-                      mainAxisAlignment:
-                          MainAxisAlignment.center,
-                      children: [
-                        Container(
-                          padding:
-                              const EdgeInsets.all(10),
-                          decoration: BoxDecoration(
-                            color: a.color
-                                .withOpacity(0.12),
-                            shape: BoxShape.circle,
-                          ),
-                          child: Icon(a.icon,
-                              color: a.color, size: 20),
-                        ),
-                        const SizedBox(height: 7),
-                        Text(
-                          a.label,
-                          textAlign: TextAlign.center,
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          style: const TextStyle(
-                            fontSize: 10,
-                            fontWeight: FontWeight.w500,
-                            color: SellerColors.darkText,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                );
-              },
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  // ═══════════════════════════════
+  // ═══════════════════════════
   // OVERVIEW CARDS
-  // ═══════════════════════════════
+  // ═══════════════════════════
   Widget _buildOverviewCards() {
     return Padding(
       padding: const EdgeInsets.fromLTRB(16, 20, 16, 0),
@@ -426,34 +254,18 @@ class SellerHomeScreen extends StatelessWidget {
                 const NeverScrollableScrollPhysics(),
             childAspectRatio: 1.65,
             children: [
-              _statCard(
-                'Total Orders',
-                '248',
-                Icons.receipt_long,
-                Colors.blue,
-                '+12 today',
-              ),
-              _statCard(
-                'Delivered',
-                '210',
-                Icons.check_circle,
-                Colors.green,
-                '85% success',
-              ),
-              _statCard(
-                'Pending',
-                '18',
-                Icons.hourglass_top,
-                Colors.orange,
-                'Action needed',
-              ),
-              _statCard(
-                'Cancelled',
-                '14',
-                Icons.cancel,
-                Colors.red,
-                '5.6% rate',
-              ),
+              _statCard('Total Orders', '248',
+                  Icons.receipt_long,
+                  Colors.blue, '+12 today'),
+              _statCard('Delivered', '210',
+                  Icons.check_circle,
+                  Colors.green, '85% success'),
+              _statCard('Pending', '18',
+                  Icons.hourglass_top,
+                  Colors.orange, 'Action needed'),
+              _statCard('Cancelled', '14',
+                  Icons.cancel,
+                  Colors.red, '5.6% rate'),
             ],
           ),
         ],
@@ -484,18 +296,17 @@ class SellerHomeScreen extends StatelessWidget {
             mainAxisAlignment:
                 MainAxisAlignment.spaceBetween,
             children: [
-              Text(
-                title,
-                style: const TextStyle(
-                  color: SellerColors.subText,
-                  fontSize: 11,
-                ),
-              ),
+              Text(title,
+                  style: const TextStyle(
+                    color: SellerColors.subText,
+                    fontSize: 11,
+                  )),
               Container(
                 padding: const EdgeInsets.all(5),
                 decoration: BoxDecoration(
                   color: color.withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(8),
+                  borderRadius:
+                      BorderRadius.circular(8),
                 ),
                 child:
                     Icon(icon, color: color, size: 15),
@@ -503,23 +314,20 @@ class SellerHomeScreen extends StatelessWidget {
             ],
           ),
           Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+            crossAxisAlignment:
+                CrossAxisAlignment.start,
             children: [
-              Text(
-                value,
-                style: TextStyle(
-                  color: color,
-                  fontSize: 22,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              Text(
-                sub,
-                style: const TextStyle(
-                  color: SellerColors.subText,
-                  fontSize: 10,
-                ),
-              ),
+              Text(value,
+                  style: TextStyle(
+                    color: color,
+                    fontSize: 22,
+                    fontWeight: FontWeight.bold,
+                  )),
+              Text(sub,
+                  style: const TextStyle(
+                    color: SellerColors.subText,
+                    fontSize: 10,
+                  )),
             ],
           ),
         ],
@@ -527,10 +335,10 @@ class SellerHomeScreen extends StatelessWidget {
     );
   }
 
-  // ═══════════════════════════════
-  // ORDER STATUS
-  // ═══════════════════════════════
-  Widget _buildOrderStatus(BuildContext context) {
+  // ═══════════════════════════
+  // ORDER PIPELINE
+  // ═══════════════════════════
+  Widget _buildOrderPipeline(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.fromLTRB(16, 18, 16, 0),
       child: Container(
@@ -553,14 +361,12 @@ class SellerHomeScreen extends StatelessWidget {
               mainAxisAlignment:
                   MainAxisAlignment.spaceBetween,
               children: [
-                const Text(
-                  'Order Pipeline',
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 14,
-                    color: SellerColors.darkText,
-                  ),
-                ),
+                const Text('Order Pipeline',
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 14,
+                      color: SellerColors.darkText,
+                    )),
                 GestureDetector(
                   onTap: () => Navigator.push(
                     context,
@@ -569,14 +375,12 @@ class SellerHomeScreen extends StatelessWidget {
                           const SellerOrdersScreen(),
                     ),
                   ),
-                  child: const Text(
-                    'View All',
-                    style: TextStyle(
-                      color: SellerColors.primary,
-                      fontSize: 12,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
+                  child: const Text('View All',
+                      style: TextStyle(
+                        color: SellerColors.primary,
+                        fontSize: 12,
+                        fontWeight: FontWeight.w600,
+                      )),
                 ),
               ],
             ),
@@ -585,19 +389,16 @@ class SellerHomeScreen extends StatelessWidget {
               mainAxisAlignment:
                   MainAxisAlignment.spaceAround,
               children: [
-                _pipelineDot('Pending', '18',
-                    Colors.orange,
+                _dot('Pending', '18', Colors.orange,
                     Icons.hourglass_top),
-                _pipelineArrow(),
-                _pipelineDot('Processing', '24',
-                    Colors.blue, Icons.sync),
-                _pipelineArrow(),
-                _pipelineDot('Shipped', '32',
-                    Colors.purple,
+                _arrow(),
+                _dot('Processing', '24', Colors.blue,
+                    Icons.sync),
+                _arrow(),
+                _dot('Shipped', '32', Colors.purple,
                     Icons.local_shipping),
-                _pipelineArrow(),
-                _pipelineDot('Delivered', '210',
-                    Colors.green,
+                _arrow(),
+                _dot('Delivered', '210', Colors.green,
                     Icons.check_circle),
               ],
             ),
@@ -607,7 +408,7 @@ class SellerHomeScreen extends StatelessWidget {
     );
   }
 
-  Widget _pipelineDot(String label, String count,
+  Widget _dot(String label, String count,
       Color color, IconData icon) {
     return Column(
       children: [
@@ -617,39 +418,32 @@ class SellerHomeScreen extends StatelessWidget {
             color: color.withOpacity(0.1),
             shape: BoxShape.circle,
           ),
-          child: Icon(icon, color: color, size: 18),
+          child: Icon(icon, color: color, size: 17),
         ),
-        const SizedBox(height: 5),
-        Text(
-          count,
-          style: TextStyle(
-            color: color,
-            fontWeight: FontWeight.bold,
-            fontSize: 14,
-          ),
-        ),
-        Text(
-          label,
-          style: const TextStyle(
-            color: SellerColors.subText,
-            fontSize: 10,
-          ),
-        ),
+        const SizedBox(height: 4),
+        Text(count,
+            style: TextStyle(
+              color: color,
+              fontWeight: FontWeight.bold,
+              fontSize: 14,
+            )),
+        Text(label,
+            style: const TextStyle(
+              color: SellerColors.subText,
+              fontSize: 10,
+            )),
       ],
     );
   }
 
-  Widget _pipelineArrow() {
-    return const Icon(
-      Icons.arrow_forward_ios,
-      color: Color(0xFFCCCCCC),
-      size: 10,
-    );
+  Widget _arrow() {
+    return const Icon(Icons.arrow_forward_ios,
+        color: Color(0xFFCCCCCC), size: 10);
   }
 
-  // ═══════════════════════════════
+  // ═══════════════════════════
   // RECENT ORDERS
-  // ═══════════════════════════════
+  // ═══════════════════════════
   Widget _buildRecentOrders(BuildContext context) {
     final orders = [
       {
@@ -696,14 +490,12 @@ class SellerHomeScreen extends StatelessWidget {
               mainAxisAlignment:
                   MainAxisAlignment.spaceBetween,
               children: [
-                const Text(
-                  'Recent Orders',
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 14,
-                    color: SellerColors.darkText,
-                  ),
-                ),
+                const Text('Recent Orders',
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 14,
+                      color: SellerColors.darkText,
+                    )),
                 GestureDetector(
                   onTap: () => Navigator.push(
                     context,
@@ -712,14 +504,12 @@ class SellerHomeScreen extends StatelessWidget {
                           const SellerOrdersScreen(),
                     ),
                   ),
-                  child: const Text(
-                    'See All',
-                    style: TextStyle(
-                      color: SellerColors.primary,
-                      fontSize: 12,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
+                  child: const Text('See All',
+                      style: TextStyle(
+                        color: SellerColors.primary,
+                        fontSize: 12,
+                        fontWeight: FontWeight.w600,
+                      )),
                 ),
               ],
             ),
@@ -743,7 +533,7 @@ class SellerHomeScreen extends StatelessWidget {
               borderRadius: BorderRadius.circular(10),
             ),
             child: const Icon(Icons.shopping_bag,
-                color: SellerColors.primary, size: 18),
+                color: SellerColors.primary, size: 17),
           ),
           const SizedBox(width: 12),
           Expanded(
@@ -751,35 +541,29 @@ class SellerHomeScreen extends StatelessWidget {
               crossAxisAlignment:
                   CrossAxisAlignment.start,
               children: [
-                Text(
-                  order['name'],
-                  style: const TextStyle(
-                    fontWeight: FontWeight.w600,
-                    fontSize: 13,
-                    color: SellerColors.darkText,
-                  ),
-                ),
-                Text(
-                  order['id'],
-                  style: const TextStyle(
-                    color: SellerColors.subText,
-                    fontSize: 11,
-                  ),
-                ),
+                Text(order['name'],
+                    style: const TextStyle(
+                      fontWeight: FontWeight.w600,
+                      fontSize: 13,
+                      color: SellerColors.darkText,
+                    )),
+                Text(order['id'],
+                    style: const TextStyle(
+                      color: SellerColors.subText,
+                      fontSize: 11,
+                    )),
               ],
             ),
           ),
           Column(
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
-              Text(
-                order['amount'],
-                style: const TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 13,
-                  color: SellerColors.darkText,
-                ),
-              ),
+              Text(order['amount'],
+                  style: const TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 13,
+                    color: SellerColors.darkText,
+                  )),
               const SizedBox(height: 3),
               Container(
                 padding: const EdgeInsets.symmetric(
@@ -790,14 +574,12 @@ class SellerHomeScreen extends StatelessWidget {
                   borderRadius:
                       BorderRadius.circular(20),
                 ),
-                child: Text(
-                  order['status'],
-                  style: TextStyle(
-                    color: order['color'] as Color,
-                    fontSize: 10,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
+                child: Text(order['status'],
+                    style: TextStyle(
+                      color: order['color'] as Color,
+                      fontSize: 10,
+                      fontWeight: FontWeight.bold,
+                    )),
               ),
             ],
           ),
@@ -805,13 +587,4 @@ class SellerHomeScreen extends StatelessWidget {
       ),
     );
   }
-}
-
-// ── Action Model ──
-class _Action {
-  final String label;
-  final IconData icon;
-  final Color color;
-  final VoidCallback onTap;
-  _Action(this.label, this.icon, this.color, this.onTap);
 }
