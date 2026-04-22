@@ -30,7 +30,7 @@ class HardwareStoresScreen extends StatelessWidget {
                   context,
                   MaterialPageRoute(
                     builder: (context) =>
-                        HardwareProductsScreen(products: store.products),
+                        HardwareProductsScreen(products: store.products, storeName: store.name),
                   ),
                 );
               },

@@ -1,6 +1,8 @@
 import 'dart:async';
 import 'dart:ui';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import '../../providers/cart_provider.dart';
 
 // ✅ Category Screens
 import '../categories/grocery_category_screen.dart';
@@ -570,12 +572,6 @@ class _HomeScreenState extends State<HomeScreen> {
 
       backgroundColor: Colors.green.shade50,
 
-      floatingActionButton: FloatingActionButton(
-        backgroundColor: Colors.green,
-        onPressed: () {},
-        child: const Icon(Icons.shopping_cart),
-      ),
-
       body: _pages[_selectedIndex],
 
       bottomNavigationBar: BottomNavigationBar(
@@ -589,31 +585,56 @@ class _HomeScreenState extends State<HomeScreen> {
         type: BottomNavigationBarType.fixed,
 
         onTap: (index) {
-
           setState(() {
             _selectedIndex = index;
           });
-
         },
 
-        items: const [
+        items: [
 
-          BottomNavigationBarItem(
+          const BottomNavigationBarItem(
             icon: Icon(Icons.home),
             label: "Home",
           ),
 
-          BottomNavigationBarItem(
+          const BottomNavigationBarItem(
             icon: Icon(Icons.local_offer),
             label: "Offers",
           ),
 
           BottomNavigationBarItem(
-            icon: Icon(Icons.shopping_cart),
+            icon: Consumer<CartProvider>(
+              builder: (context, cart, _) => Stack(
+                clipBehavior: Clip.none,
+                children: [
+                  const Icon(Icons.shopping_cart),
+                  if (cart.itemCount > 0)
+                    Positioned(
+                      right: -6,
+                      top: -6,
+                      child: Container(
+                        padding: const EdgeInsets.all(4),
+                        decoration: const BoxDecoration(
+                          color: Colors.red,
+                          shape: BoxShape.circle,
+                        ),
+                        child: Text(
+                          cart.itemCount > 99 ? "99+" : "${cart.itemCount}",
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 10,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                    ),
+                ],
+              ),
+            ),
             label: "Cart",
           ),
 
-          BottomNavigationBarItem(
+          const BottomNavigationBarItem(
             icon: Icon(Icons.person),
             label: "Profile",
           ),

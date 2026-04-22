@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'providers/cart_provider.dart';
+import 'providers/offer_provider.dart';
 import 'screens/auth/login_screen.dart';
 import 'screens/auth/signup_screen.dart';
 import 'screens/home/home_screen.dart';
@@ -15,7 +18,12 @@ class GharTakApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => CartProvider()),
+        ChangeNotifierProvider(create: (_) => OfferProvider()),
+      ],
+      child: MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Ghar Tak',
       theme: ThemeData(
@@ -59,6 +67,7 @@ class GharTakApp extends StatelessWidget {
         '/become-vendor':  (context) =>
             BecomeVendorScreen(),
       },
+    ),
     );
   }
 }
