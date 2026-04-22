@@ -1,13 +1,16 @@
 import 'package:flutter/material.dart';
 import '../widgets/seller_colors.dart';
 import '../auth/seller_login_screen.dart';
+import '../shop/change_password_screen.dart';
+import '../shop/shop_address_screen.dart';
+import '../shop/shop_banner_screen.dart';
+import '../shop/shop_profile_screen.dart';
 
 class SellerMeScreen extends StatefulWidget {
   const SellerMeScreen({super.key});
 
   @override
-  State<SellerMeScreen> createState() =>
-      _SellerMeScreenState();
+  State<SellerMeScreen> createState() => _SellerMeScreenState();
 }
 
 class _SellerMeScreenState extends State<SellerMeScreen> {
@@ -31,21 +34,21 @@ class _SellerMeScreenState extends State<SellerMeScreen> {
                   'Shop Profile',
                   'Edit name, logo, description',
                   Colors.blue,
-                  () {},
+                  () => _openScreen(const ShopProfileScreen()),
                 ),
                 _MenuItem(
                   Icons.photo_library_outlined,
                   'Shop Banner',
                   'Update your banner image',
                   Colors.purple,
-                  () {},
+                  () => _openScreen(const ShopBannerScreen()),
                 ),
                 _MenuItem(
                   Icons.location_on_outlined,
                   'Shop Address',
                   'Manage pickup location',
                   Colors.teal,
-                  () {},
+                  () => _openScreen(const ShopAddressScreen()),
                 ),
               ],
             ),
@@ -58,7 +61,7 @@ class _SellerMeScreenState extends State<SellerMeScreen> {
                   'Change Password',
                   'Update your password',
                   Colors.orange,
-                  () {},
+                  () => _openScreen(const ChangePasswordScreen()),
                 ),
                 _MenuItem(
                   Icons.phone_outlined,
@@ -142,13 +145,11 @@ class _SellerMeScreenState extends State<SellerMeScreen> {
                 width: 80,
                 height: 80,
                 decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.22),
+                  color: Colors.white.withValues(alpha: 0.22),
                   shape: BoxShape.circle,
-                  border: Border.all(
-                      color: Colors.white, width: 2.5),
+                  border: Border.all(color: Colors.white, width: 2.5),
                 ),
-                child: const Icon(Icons.store,
-                    color: Colors.white, size: 40),
+                child: const Icon(Icons.store, color: Colors.white, size: 40),
               ),
               Positioned(
                 right: 0,
@@ -178,23 +179,21 @@ class _SellerMeScreenState extends State<SellerMeScreen> {
           Text(
             'ahmed@gmail.com',
             style: TextStyle(
-              color: Colors.white.withOpacity(0.75),
+              color: Colors.white.withValues(alpha: 0.75),
               fontSize: 12,
             ),
           ),
           const SizedBox(height: 6),
           Container(
-            padding: const EdgeInsets.symmetric(
-                horizontal: 12, vertical: 5),
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 5),
             decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.2),
+              color: Colors.white.withValues(alpha: 0.2),
               borderRadius: BorderRadius.circular(20),
             ),
             child: const Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Icon(Icons.verified,
-                    color: Colors.white, size: 14),
+                Icon(Icons.verified, color: Colors.white, size: 14),
                 SizedBox(width: 5),
                 Text(
                   'Verified Seller',
@@ -213,20 +212,26 @@ class _SellerMeScreenState extends State<SellerMeScreen> {
   }
 
   // ═══ Shop Stats ═══
+  Future<void> _openScreen(Widget screen) async {
+    await Navigator.push(
+      context,
+      MaterialPageRoute(builder: (_) => screen),
+    );
+  }
+
   Widget _buildShopStats() {
     return Transform.translate(
       offset: const Offset(0, -16),
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16),
         child: Container(
-          padding: const EdgeInsets.symmetric(
-              vertical: 16, horizontal: 8),
+          padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 8),
           decoration: BoxDecoration(
             color: Colors.white,
             borderRadius: BorderRadius.circular(16),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withOpacity(0.07),
+                color: Colors.black.withValues(alpha: 0.07),
                 blurRadius: 12,
                 offset: const Offset(0, 4),
               ),
@@ -235,17 +240,13 @@ class _SellerMeScreenState extends State<SellerMeScreen> {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
-              _statItem('56', 'Products',
-                  Icons.inventory_2_outlined),
+              _statItem('56', 'Products', Icons.inventory_2_outlined),
               _divider(),
-              _statItem('248', 'Orders',
-                  Icons.receipt_long_outlined),
+              _statItem('248', 'Orders', Icons.receipt_long_outlined),
               _divider(),
-              _statItem('4.8⭐', 'Rating',
-                  Icons.star_border),
+              _statItem('4.8⭐', 'Rating', Icons.star_border),
               _divider(),
-              _statItem('1.2K', 'Visitors',
-                  Icons.visibility_outlined),
+              _statItem('1.2K', 'Visitors', Icons.visibility_outlined),
             ],
           ),
         ),
@@ -253,8 +254,7 @@ class _SellerMeScreenState extends State<SellerMeScreen> {
     );
   }
 
-  Widget _statItem(
-      String value, String label, IconData icon) {
+  Widget _statItem(String value, String label, IconData icon) {
     return Column(
       children: [
         Icon(icon, color: SellerColors.primary, size: 18),
@@ -279,15 +279,11 @@ class _SellerMeScreenState extends State<SellerMeScreen> {
   }
 
   Widget _divider() {
-    return Container(
-        height: 36,
-        width: 1,
-        color: Colors.grey[200]);
+    return Container(height: 36, width: 1, color: Colors.grey[200]);
   }
 
   // ═══ Menu Section ═══
-  Widget _buildMenuSection(
-      String title, List<_MenuItem> items) {
+  Widget _buildMenuSection(String title, List<_MenuItem> items) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16),
       child: Column(
@@ -309,15 +305,14 @@ class _SellerMeScreenState extends State<SellerMeScreen> {
               borderRadius: BorderRadius.circular(16),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withOpacity(0.04),
+                  color: Colors.black.withValues(alpha: 0.04),
                   blurRadius: 8,
                   offset: const Offset(0, 2),
                 ),
               ],
             ),
             child: Column(
-              children:
-                  items.asMap().entries.map((entry) {
+              children: items.asMap().entries.map((entry) {
                 final int i = entry.key;
                 final _MenuItem item = entry.value;
                 final bool isLast = i == items.length - 1;
@@ -325,20 +320,16 @@ class _SellerMeScreenState extends State<SellerMeScreen> {
                   children: [
                     ListTile(
                       onTap: item.onTap,
-                      contentPadding:
-                          const EdgeInsets.symmetric(
-                              horizontal: 16, vertical: 2),
+                      contentPadding: const EdgeInsets.symmetric(
+                          horizontal: 16, vertical: 2),
                       leading: Container(
                         width: 38,
                         height: 38,
                         decoration: BoxDecoration(
-                          color: item.color
-                              .withOpacity(0.12),
-                          borderRadius:
-                              BorderRadius.circular(10),
+                          color: item.color.withValues(alpha: 0.12),
+                          borderRadius: BorderRadius.circular(10),
                         ),
-                        child: Icon(item.icon,
-                            color: item.color, size: 19),
+                        child: Icon(item.icon, color: item.color, size: 19),
                       ),
                       title: Text(
                         item.title,
@@ -383,14 +374,13 @@ class _SellerMeScreenState extends State<SellerMeScreen> {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16),
       child: Container(
-        padding: const EdgeInsets.symmetric(
-            horizontal: 16, vertical: 12),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(16),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.04),
+              color: Colors.black.withValues(alpha: 0.04),
               blurRadius: 8,
               offset: const Offset(0, 2),
             ),
@@ -402,7 +392,7 @@ class _SellerMeScreenState extends State<SellerMeScreen> {
               width: 38,
               height: 38,
               decoration: BoxDecoration(
-                color: Colors.blue.withOpacity(0.12),
+                color: Colors.blue.withValues(alpha: 0.12),
                 borderRadius: BorderRadius.circular(10),
               ),
               child: const Icon(
@@ -436,9 +426,8 @@ class _SellerMeScreenState extends State<SellerMeScreen> {
             ),
             Switch(
               value: _notificationsOn,
-              onChanged: (val) =>
-                  setState(() => _notificationsOn = val),
-              activeColor: SellerColors.primary,
+              onChanged: (val) => setState(() => _notificationsOn = val),
+              activeThumbColor: SellerColors.primary,
             ),
           ],
         ),
@@ -455,8 +444,7 @@ class _SellerMeScreenState extends State<SellerMeScreen> {
         height: 50,
         child: OutlinedButton.icon(
           onPressed: () => _logoutDialog(context),
-          icon: const Icon(Icons.logout,
-              color: Colors.red, size: 18),
+          icon: const Icon(Icons.logout, color: Colors.red, size: 18),
           label: const Text(
             'Logout',
             style: TextStyle(
@@ -466,10 +454,9 @@ class _SellerMeScreenState extends State<SellerMeScreen> {
             ),
           ),
           style: OutlinedButton.styleFrom(
-            side: const BorderSide(
-                color: Colors.red, width: 1.5),
-            shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(14)),
+            side: const BorderSide(color: Colors.red, width: 1.5),
+            shape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
           ),
         ),
       ),
@@ -480,19 +467,15 @@ class _SellerMeScreenState extends State<SellerMeScreen> {
     showDialog(
       context: context,
       builder: (_) => AlertDialog(
-        shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(16)),
-        title: const Text('Logout',
-            style:
-                TextStyle(fontWeight: FontWeight.bold)),
-        content:
-            const Text('Are you sure you want to logout?'),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        title:
+            const Text('Logout', style: TextStyle(fontWeight: FontWeight.bold)),
+        content: const Text('Are you sure you want to logout?'),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
             child: const Text('Cancel',
-                style: TextStyle(
-                    color: SellerColors.subText)),
+                style: TextStyle(color: SellerColors.subText)),
           ),
           ElevatedButton(
             style: ElevatedButton.styleFrom(
@@ -503,14 +486,11 @@ class _SellerMeScreenState extends State<SellerMeScreen> {
             onPressed: () {
               Navigator.pushAndRemoveUntil(
                 context,
-                MaterialPageRoute(
-                    builder: (_) =>
-                        const SellerLoginScreen()),
+                MaterialPageRoute(builder: (_) => const SellerLoginScreen()),
                 (route) => false,
               );
             },
-            child: const Text('Logout',
-                style: TextStyle(color: Colors.white)),
+            child: const Text('Logout', style: TextStyle(color: Colors.white)),
           ),
         ],
       ),
@@ -524,6 +504,5 @@ class _MenuItem {
   final String subtitle;
   final Color color;
   final VoidCallback onTap;
-  _MenuItem(this.icon, this.title, this.subtitle,
-      this.color, this.onTap);
+  _MenuItem(this.icon, this.title, this.subtitle, this.color, this.onTap);
 }

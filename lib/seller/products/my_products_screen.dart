@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import '../widgets/seller_colors.dart';
 import 'add_product_screen.dart';
@@ -81,9 +83,7 @@ class _MyProductsScreenState extends State<MyProductsScreen>
     if (_tabController.index == 1) {
       list = list.where((p) => p['status'] == 'Active').toList();
     } else if (_tabController.index == 2) {
-      list = list
-          .where((p) => p['status'] == 'Out of Stock')
-          .toList();
+      list = list.where((p) => p['status'] == 'Out of Stock').toList();
     }
 
     if (_searchQuery.isNotEmpty) {
@@ -102,9 +102,64 @@ class _MyProductsScreenState extends State<MyProductsScreen>
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFFF6F6F6),
+      appBar: AppBar(
+        backgroundColor: SellerColors.primary,
+        elevation: 0,
+        toolbarHeight: 86,
+        shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.vertical(bottom: Radius.circular(24)),
+        ),
+        leading: IconButton(
+          onPressed: () => Navigator.maybePop(context),
+          icon: const Icon(Icons.arrow_back_ios_new, color: Colors.white),
+          tooltip: 'Back',
+        ),
+        titleSpacing: 0,
+        title: const Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              'My Products',
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 22,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            SizedBox(height: 4),
+            Text(
+              'Manage your inventory',
+              style: TextStyle(color: Colors.white70, fontSize: 13),
+            ),
+          ],
+        ),
+        actions: [
+          Padding(
+            padding: const EdgeInsets.only(right: 16),
+            child: Center(
+              child: Container(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                decoration: BoxDecoration(
+                  color: Colors.white.withValues(alpha: 0.2),
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                child: Text(
+                  '${products.length} Products',
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 13,
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
       body: Column(
         children: [
-          _buildHeader(context),
           _buildSearchBar(),
           _buildTabBar(),
           Expanded(
@@ -121,74 +176,37 @@ class _MyProductsScreenState extends State<MyProductsScreen>
       ),
       floatingActionButton: FloatingActionButton.extended(
         backgroundColor: SellerColors.primary,
-        onPressed: () => Navigator.push(
-          context,
-          MaterialPageRoute(
-              builder: (_) => const AddProductScreen()),
-        ),
+        onPressed: _openAddProduct,
         icon: const Icon(Icons.add, color: Colors.white),
         label: const Text(
           'Add Product',
-          style: TextStyle(
-              color: Colors.white, fontWeight: FontWeight.bold),
+          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
         ),
       ),
     );
   }
 
-  // ═══ Header ═══
-  Widget _buildHeader(BuildContext context) {
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.fromLTRB(20, 55, 20, 20),
-      decoration: const BoxDecoration(
-        color: SellerColors.primary,
-        borderRadius: BorderRadius.only(
-          bottomLeft: Radius.circular(24),
-          bottomRight: Radius.circular(24),
+  Future<void> _openAddProduct() async {
+    final product = await Navigator.push<Map<String, dynamic>>(
+      context,
+      MaterialPageRoute(builder: (_) => const AddProductScreen()),
+    );
+
+    if (!mounted || product == null) return;
+
+    setState(() => products.insert(0, product));
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: const Row(
+          children: [
+            Icon(Icons.check_circle, color: Colors.white),
+            SizedBox(width: 10),
+            Text('Product added to inventory'),
+          ],
         ),
-      ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          const Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                'My Products',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 22,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              SizedBox(height: 4),
-              Text(
-                'Manage your inventory',
-                style: TextStyle(
-                  color: Colors.white70,
-                  fontSize: 13,
-                ),
-              ),
-            ],
-          ),
-          Container(
-            padding: const EdgeInsets.symmetric(
-                horizontal: 12, vertical: 8),
-            decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.2),
-              borderRadius: BorderRadius.circular(20),
-            ),
-            child: Text(
-              '${products.length} Products',
-              style: const TextStyle(
-                color: Colors.white,
-                fontWeight: FontWeight.bold,
-                fontSize: 13,
-              ),
-            ),
-          ),
-        ],
+        backgroundColor: SellerColors.primary,
+        behavior: SnackBarBehavior.floating,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       ),
     );
   }
@@ -201,16 +219,12 @@ class _MyProductsScreenState extends State<MyProductsScreen>
         onChanged: (val) => setState(() => _searchQuery = val),
         decoration: InputDecoration(
           hintText: 'Search products...',
-          hintStyle: const TextStyle(
-              color: SellerColors.subText, fontSize: 14),
-          prefixIcon:
-              const Icon(Icons.search, color: SellerColors.primary),
+          hintStyle: const TextStyle(color: SellerColors.subText, fontSize: 14),
+          prefixIcon: const Icon(Icons.search, color: SellerColors.primary),
           suffixIcon: _searchQuery.isNotEmpty
               ? IconButton(
-                  icon: const Icon(Icons.clear,
-                      color: SellerColors.subText),
-                  onPressed: () =>
-                      setState(() => _searchQuery = ''),
+                  icon: const Icon(Icons.clear, color: SellerColors.subText),
+                  onPressed: () => setState(() => _searchQuery = ''),
                 )
               : null,
           filled: true,
@@ -226,8 +240,8 @@ class _MyProductsScreenState extends State<MyProductsScreen>
           ),
           focusedBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(14),
-            borderSide: const BorderSide(
-                color: SellerColors.primary, width: 1.5),
+            borderSide:
+                const BorderSide(color: SellerColors.primary, width: 1.5),
           ),
         ),
       ),
@@ -253,8 +267,8 @@ class _MyProductsScreenState extends State<MyProductsScreen>
           indicatorSize: TabBarIndicatorSize.tab,
           labelColor: Colors.white,
           unselectedLabelColor: SellerColors.subText,
-          labelStyle: const TextStyle(
-              fontWeight: FontWeight.bold, fontSize: 13),
+          labelStyle:
+              const TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
           tabs: const [
             Tab(text: 'All'),
             Tab(text: 'Active'),
@@ -274,13 +288,11 @@ class _MyProductsScreenState extends State<MyProductsScreen>
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.inventory_2_outlined,
-                size: 64, color: Colors.grey[300]),
+            Icon(Icons.inventory_2_outlined, size: 64, color: Colors.grey[300]),
             const SizedBox(height: 12),
             const Text(
               'No products found',
-              style: TextStyle(
-                  color: SellerColors.subText, fontSize: 15),
+              style: TextStyle(color: SellerColors.subText, fontSize: 15),
             ),
           ],
         ),
@@ -290,14 +302,12 @@ class _MyProductsScreenState extends State<MyProductsScreen>
     return ListView.builder(
       padding: const EdgeInsets.fromLTRB(16, 4, 16, 90),
       itemCount: list.length,
-      itemBuilder: (context, index) =>
-          _productCard(context, list[index]),
+      itemBuilder: (context, index) => _productCard(context, list[index]),
     );
   }
 
   // ═══ Product Card ═══
-  Widget _productCard(
-      BuildContext context, Map<String, dynamic> product) {
+  Widget _productCard(BuildContext context, Map<String, dynamic> product) {
     final bool isOutOfStock = product['status'] == 'Out of Stock';
 
     return Container(
@@ -307,7 +317,7 @@ class _MyProductsScreenState extends State<MyProductsScreen>
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: Colors.black.withValues(alpha: 0.05),
             blurRadius: 8,
             offset: const Offset(0, 2),
           ),
@@ -318,19 +328,7 @@ class _MyProductsScreenState extends State<MyProductsScreen>
         child: Row(
           children: [
             // ── Product Image ──
-            Container(
-              width: 70,
-              height: 70,
-              decoration: BoxDecoration(
-                color: (product['color'] as Color).withOpacity(0.12),
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: Icon(
-                product['image'] as IconData,
-                color: product['color'] as Color,
-                size: 34,
-              ),
-            ),
+            _productImage(product),
             const SizedBox(width: 14),
 
             // ── Product Info ──
@@ -371,8 +369,8 @@ class _MyProductsScreenState extends State<MyProductsScreen>
                             horizontal: 8, vertical: 3),
                         decoration: BoxDecoration(
                           color: isOutOfStock
-                              ? Colors.red.withOpacity(0.1)
-                              : Colors.green.withOpacity(0.1),
+                              ? Colors.red.withValues(alpha: 0.1)
+                              : Colors.green.withValues(alpha: 0.1),
                           borderRadius: BorderRadius.circular(20),
                         ),
                         child: Text(
@@ -380,9 +378,7 @@ class _MyProductsScreenState extends State<MyProductsScreen>
                               ? 'Out of Stock'
                               : 'Stock: ${product['stock']}',
                           style: TextStyle(
-                            color: isOutOfStock
-                                ? Colors.red
-                                : Colors.green,
+                            color: isOutOfStock ? Colors.red : Colors.green,
                             fontSize: 10,
                             fontWeight: FontWeight.bold,
                           ),
@@ -402,8 +398,7 @@ class _MyProductsScreenState extends State<MyProductsScreen>
                   onPressed: () => Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (_) =>
-                          EditProductScreen(product: product),
+                      builder: (_) => EditProductScreen(product: product),
                     ),
                   ),
                   icon: const Icon(
@@ -416,8 +411,7 @@ class _MyProductsScreenState extends State<MyProductsScreen>
 
                 // ✅ Delete Button — Dialog dikhata hai
                 IconButton(
-                  onPressed: () =>
-                      _deleteDialog(product['name']),
+                  onPressed: () => _deleteDialog(product['name']),
                   icon: const Icon(
                     Icons.delete_outline,
                     color: Colors.red,
@@ -433,24 +427,56 @@ class _MyProductsScreenState extends State<MyProductsScreen>
     );
   }
 
+  Widget _productImage(Map<String, dynamic> product) {
+    final imagePath = product['imagePath'];
+    if (imagePath is String &&
+        imagePath.isNotEmpty &&
+        File(imagePath).existsSync()) {
+      return ClipRRect(
+        borderRadius: BorderRadius.circular(12),
+        child: Image.file(
+          File(imagePath),
+          width: 70,
+          height: 70,
+          fit: BoxFit.cover,
+          errorBuilder: (_, __, ___) => _fallbackProductImage(product),
+        ),
+      );
+    }
+
+    return _fallbackProductImage(product);
+  }
+
+  Widget _fallbackProductImage(Map<String, dynamic> product) {
+    final color = product['color'] as Color? ?? SellerColors.primary;
+    final icon = product['image'] as IconData? ?? Icons.inventory_2_outlined;
+
+    return Container(
+      width: 70,
+      height: 70,
+      decoration: BoxDecoration(
+        color: color.withValues(alpha: 0.12),
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Icon(icon, color: color, size: 34),
+    );
+  }
+
   // ═══ Delete Dialog ═══
   void _deleteDialog(String name) {
     showDialog(
       context: context,
       builder: (_) => AlertDialog(
-        shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(16)),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         title: const Row(
           children: [
-            Icon(Icons.warning_amber_rounded,
-                color: Colors.red, size: 24),
+            Icon(Icons.warning_amber_rounded, color: Colors.red, size: 24),
             SizedBox(width: 8),
             Text('Delete Product',
                 style: TextStyle(fontWeight: FontWeight.bold)),
           ],
         ),
-        content: Text(
-            'Are you sure you want to delete "$name"?'),
+        content: Text('Are you sure you want to delete "$name"?'),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
@@ -464,8 +490,7 @@ class _MyProductsScreenState extends State<MyProductsScreen>
                   borderRadius: BorderRadius.circular(10)),
             ),
             onPressed: () => Navigator.pop(context),
-            child: const Text('Delete',
-                style: TextStyle(color: Colors.white)),
+            child: const Text('Delete', style: TextStyle(color: Colors.white)),
           ),
         ],
       ),
