@@ -28,7 +28,6 @@ import '../profile/profile_screen.dart';
 
 // ✅ Notification Screens
 import '../../data/notification_data.dart';
-import '../../models/notifications_model.dart';
 import '../notifications/notification_screen.dart';
 
 class HomeScreen extends StatefulWidget {
