@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'providers/auth_provider.dart';
 import 'providers/cart_provider.dart';
 import 'providers/offer_provider.dart';
 import 'screens/auth/login_screen.dart';
 import 'screens/auth/signup_screen.dart';
+import 'screens/auth/splash_screen.dart';
 import 'screens/home/home_screen.dart';
 import 'seller/auth/become_vendor_screen.dart';
 import 'seller/splash/seller_splash_screen.dart';
@@ -20,54 +22,48 @@ class GharTakApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
+        ChangeNotifierProvider(create: (_) => AuthProvider()),
         ChangeNotifierProvider(create: (_) => CartProvider()),
         ChangeNotifierProvider(create: (_) => OfferProvider()),
       ],
       child: MaterialApp(
-      debugShowCheckedModeBanner: false,
-      title: 'Ghar Tak',
-      theme: ThemeData(
-        primarySwatch: Colors.green,
-        scaffoldBackgroundColor: Colors.green.shade50,
-        inputDecorationTheme: InputDecorationTheme(
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(12),
-          ),
-          focusedBorder: OutlineInputBorder(
-            borderSide:
-                const BorderSide(color: Colors.green, width: 2),
-            borderRadius: BorderRadius.circular(12),
-          ),
-        ),
-        elevatedButtonTheme: ElevatedButtonThemeData(
-          style: ElevatedButton.styleFrom(
-            backgroundColor: Colors.green,
-            shape: RoundedRectangleBorder(
+        debugShowCheckedModeBanner: false,
+        title: 'Ghar Tak',
+        theme: ThemeData(
+          primarySwatch: Colors.green,
+          scaffoldBackgroundColor: Colors.green.shade50,
+          inputDecorationTheme: InputDecorationTheme(
+            border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
             ),
-            minimumSize: const Size(double.infinity, 50),
+            focusedBorder: OutlineInputBorder(
+              borderSide: const BorderSide(color: Colors.green, width: 2),
+              borderRadius: BorderRadius.circular(12),
+            ),
+          ),
+          elevatedButtonTheme: ElevatedButtonThemeData(
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.green,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+              minimumSize: const Size(double.infinity, 50),
+            ),
           ),
         ),
+        initialRoute: '/splash',
+        routes: {
+          // ── Core ──
+          '/splash':  (context) => const SplashScreen(),
+          '/login':   (context) => LoginScreen(),
+          '/signup':  (context) => const SignupScreen(),
+          '/home':    (context) => HomeScreen(),
+          // ── Seller ──
+          '/seller-splash': (context) => const SellerSplashScreen(),
+          '/seller-home':   (context) => const SellerBottomNav(),
+          '/become-vendor': (context) => const BecomeVendorScreen(),
+        },
       ),
-
-      // ✅ User Side se start hoga
-      initialRoute: '/login',
-
-      routes: {
-        // ── User Side Routes ──
-        '/login':  (context) => LoginScreen(),
-        '/signup': (context) => SignupScreen(),
-        '/home':   (context) => HomeScreen(),
-
-        // ── Seller Side Routes ──
-        '/seller-splash':  (context) =>
-            const SellerSplashScreen(),
-        '/seller-home':    (context) =>
-            const SellerBottomNav(),
-        '/become-vendor':  (context) =>
-            BecomeVendorScreen(),
-      },
-    ),
     );
   }
 }
