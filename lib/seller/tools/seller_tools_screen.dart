@@ -501,7 +501,7 @@ class SellerToolsScreen extends StatelessWidget {
           icon: Icons.account_balance_wallet_outlined,
           color: const Color(0xFF1A73E8),
           badge: 'Rs. 45,200',
-          badgeColor: Color(0xFF1A73E8),
+          badgeColor: const Color(0xFF1A73E8),
           screen: const SellerWalletScreen(),
         ),
       ];

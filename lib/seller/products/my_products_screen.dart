@@ -1,6 +1,8 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import '../../providers/product_provider.dart';
 import '../widgets/seller_colors.dart';
 import 'add_product_screen.dart';
 import 'edit_product_screen.dart';
@@ -17,54 +19,6 @@ class _MyProductsScreenState extends State<MyProductsScreen>
   late TabController _tabController;
   String _searchQuery = '';
 
-  final List<Map<String, dynamic>> products = [
-    {
-      'name': 'LED Bulb 12W',
-      'category': 'Electric',
-      'price': 'Rs. 350',
-      'stock': 45,
-      'status': 'Active',
-      'image': Icons.lightbulb,
-      'color': Colors.yellow,
-    },
-    {
-      'name': 'PVC Pipe 1 inch',
-      'category': 'Hardware',
-      'price': 'Rs. 120',
-      'stock': 0,
-      'status': 'Out of Stock',
-      'image': Icons.plumbing,
-      'color': Colors.grey,
-    },
-    {
-      'name': 'Panadol 10 Tabs',
-      'category': 'Pharmacies',
-      'price': 'Rs. 80',
-      'stock': 200,
-      'status': 'Active',
-      'image': Icons.medication,
-      'color': Colors.red,
-    },
-    {
-      'name': 'Basmati Rice 5kg',
-      'category': 'Grocery',
-      'price': 'Rs. 1,200',
-      'stock': 30,
-      'status': 'Active',
-      'image': Icons.rice_bowl,
-      'color': Colors.brown,
-    },
-    {
-      'name': 'Wood Screw Set',
-      'category': 'Hardware',
-      'price': 'Rs. 250',
-      'stock': 0,
-      'status': 'Out of Stock',
-      'image': Icons.handyman,
-      'color': Colors.blueGrey,
-    },
-  ];
-
   @override
   void initState() {
     super.initState();
@@ -77,137 +31,125 @@ class _MyProductsScreenState extends State<MyProductsScreen>
     super.dispose();
   }
 
-  List<Map<String, dynamic>> get _filteredProducts {
-    List<Map<String, dynamic>> list = products;
+  // Returns (originalIndex, product) pairs after applying tab + search filters
+  List<MapEntry<int, Map<String, dynamic>>> _filtered(
+      List<Map<String, dynamic>> all) {
+    var entries = [
+      for (int i = 0; i < all.length; i++) MapEntry(i, all[i]),
+    ];
 
     if (_tabController.index == 1) {
-      list = list.where((p) => p['status'] == 'Active').toList();
+      entries = entries.where((e) => e.value['status'] == 'Active').toList();
     } else if (_tabController.index == 2) {
-      list = list.where((p) => p['status'] == 'Out of Stock').toList();
+      entries =
+          entries.where((e) => e.value['status'] == 'Out of Stock').toList();
     }
 
     if (_searchQuery.isNotEmpty) {
-      list = list
-          .where((p) => p['name']
-              .toString()
+      entries = entries
+          .where((e) => (e.value['name'] as String? ?? '')
               .toLowerCase()
               .contains(_searchQuery.toLowerCase()))
           .toList();
     }
 
-    return list;
+    return entries;
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: const Color(0xFFF6F6F6),
-      appBar: AppBar(
-        backgroundColor: SellerColors.primary,
-        elevation: 0,
-        toolbarHeight: 86,
-        shape: const RoundedRectangleBorder(
-          borderRadius: BorderRadius.vertical(bottom: Radius.circular(24)),
-        ),
-        leading: IconButton(
-          onPressed: () => Navigator.maybePop(context),
-          icon: const Icon(Icons.arrow_back_ios_new, color: Colors.white),
-          tooltip: 'Back',
-        ),
-        titleSpacing: 0,
-        title: const Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text(
-              'My Products',
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 22,
-                fontWeight: FontWeight.bold,
-              ),
+    return Consumer<ProductProvider>(
+      builder: (context, provider, _) {
+        final all = provider.products;
+
+        return Scaffold(
+          backgroundColor: const Color(0xFFF6F6F6),
+          appBar: AppBar(
+            backgroundColor: SellerColors.primary,
+            elevation: 0,
+            toolbarHeight: 86,
+            shape: const RoundedRectangleBorder(
+              borderRadius:
+                  BorderRadius.vertical(bottom: Radius.circular(24)),
             ),
-            SizedBox(height: 4),
-            Text(
-              'Manage your inventory',
-              style: TextStyle(color: Colors.white70, fontSize: 13),
+            leading: IconButton(
+              onPressed: () => Navigator.maybePop(context),
+              icon: const Icon(Icons.arrow_back_ios_new, color: Colors.white),
             ),
-          ],
-        ),
-        actions: [
-          Padding(
-            padding: const EdgeInsets.only(right: 16),
-            child: Center(
-              child: Container(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                decoration: BoxDecoration(
-                  color: Colors.white.withValues(alpha: 0.2),
-                  borderRadius: BorderRadius.circular(20),
+            titleSpacing: 0,
+            title: const Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  'My Products',
+                  style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 22,
+                      fontWeight: FontWeight.bold),
                 ),
-                child: Text(
-                  '${products.length} Products',
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 13,
+                SizedBox(height: 4),
+                Text(
+                  'Manage your inventory',
+                  style: TextStyle(color: Colors.white70, fontSize: 13),
+                ),
+              ],
+            ),
+            actions: [
+              Padding(
+                padding: const EdgeInsets.only(right: 16),
+                child: Center(
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 12, vertical: 8),
+                    decoration: BoxDecoration(
+                      color: Colors.white.withValues(alpha: 0.2),
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                    child: Text(
+                      '${all.length} Products',
+                      style: const TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 13),
+                    ),
                   ),
                 ),
               ),
+            ],
+          ),
+          body: Column(
+            children: [
+              _buildSearchBar(),
+              _buildTabBar(),
+              Expanded(
+                child: TabBarView(
+                  controller: _tabController,
+                  children: [
+                    _buildProductList(all),
+                    _buildProductList(all),
+                    _buildProductList(all),
+                  ],
+                ),
+              ),
+            ],
+          ),
+          floatingActionButton: FloatingActionButton.extended(
+            backgroundColor: SellerColors.primary,
+            onPressed: () => Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (_) => const AddProductScreen()),
+            ),
+            icon: const Icon(Icons.add, color: Colors.white),
+            label: const Text(
+              'Add Product',
+              style: TextStyle(
+                  color: Colors.white, fontWeight: FontWeight.bold),
             ),
           ),
-        ],
-      ),
-      body: Column(
-        children: [
-          _buildSearchBar(),
-          _buildTabBar(),
-          Expanded(
-            child: TabBarView(
-              controller: _tabController,
-              children: [
-                _buildProductList(),
-                _buildProductList(),
-                _buildProductList(),
-              ],
-            ),
-          ),
-        ],
-      ),
-      floatingActionButton: FloatingActionButton.extended(
-        backgroundColor: SellerColors.primary,
-        onPressed: _openAddProduct,
-        icon: const Icon(Icons.add, color: Colors.white),
-        label: const Text(
-          'Add Product',
-          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
-        ),
-      ),
-    );
-  }
-
-  Future<void> _openAddProduct() async {
-    final product = await Navigator.push<Map<String, dynamic>>(
-      context,
-      MaterialPageRoute(builder: (_) => const AddProductScreen()),
-    );
-
-    if (!mounted || product == null) return;
-
-    setState(() => products.insert(0, product));
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: const Row(
-          children: [
-            Icon(Icons.check_circle, color: Colors.white),
-            SizedBox(width: 10),
-            Text('Product added to inventory'),
-          ],
-        ),
-        backgroundColor: SellerColors.primary,
-        behavior: SnackBarBehavior.floating,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-      ),
+        );
+      },
     );
   }
 
@@ -219,11 +161,14 @@ class _MyProductsScreenState extends State<MyProductsScreen>
         onChanged: (val) => setState(() => _searchQuery = val),
         decoration: InputDecoration(
           hintText: 'Search products...',
-          hintStyle: const TextStyle(color: SellerColors.subText, fontSize: 14),
-          prefixIcon: const Icon(Icons.search, color: SellerColors.primary),
+          hintStyle:
+              const TextStyle(color: SellerColors.subText, fontSize: 14),
+          prefixIcon:
+              const Icon(Icons.search, color: SellerColors.primary),
           suffixIcon: _searchQuery.isNotEmpty
               ? IconButton(
-                  icon: const Icon(Icons.clear, color: SellerColors.subText),
+                  icon: const Icon(Icons.clear,
+                      color: SellerColors.subText),
                   onPressed: () => setState(() => _searchQuery = ''),
                 )
               : null,
@@ -267,8 +212,8 @@ class _MyProductsScreenState extends State<MyProductsScreen>
           indicatorSize: TabBarIndicatorSize.tab,
           labelColor: Colors.white,
           unselectedLabelColor: SellerColors.subText,
-          labelStyle:
-              const TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
+          labelStyle: const TextStyle(
+              fontWeight: FontWeight.bold, fontSize: 13),
           tabs: const [
             Tab(text: 'All'),
             Tab(text: 'Active'),
@@ -280,19 +225,21 @@ class _MyProductsScreenState extends State<MyProductsScreen>
   }
 
   // ═══ Product List ═══
-  Widget _buildProductList() {
-    final list = _filteredProducts;
+  Widget _buildProductList(List<Map<String, dynamic>> all) {
+    final list = _filtered(all);
 
     if (list.isEmpty) {
       return Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.inventory_2_outlined, size: 64, color: Colors.grey[300]),
+            Icon(Icons.inventory_2_outlined,
+                size: 64, color: Colors.grey[300]),
             const SizedBox(height: 12),
             const Text(
               'No products found',
-              style: TextStyle(color: SellerColors.subText, fontSize: 15),
+              style: TextStyle(
+                  color: SellerColors.subText, fontSize: 15),
             ),
           ],
         ),
@@ -302,12 +249,14 @@ class _MyProductsScreenState extends State<MyProductsScreen>
     return ListView.builder(
       padding: const EdgeInsets.fromLTRB(16, 4, 16, 90),
       itemCount: list.length,
-      itemBuilder: (context, index) => _productCard(context, list[index]),
+      itemBuilder: (context, index) =>
+          _productCard(context, list[index].key, list[index].value),
     );
   }
 
   // ═══ Product Card ═══
-  Widget _productCard(BuildContext context, Map<String, dynamic> product) {
+  Widget _productCard(BuildContext context, int originalIndex,
+      Map<String, dynamic> product) {
     final bool isOutOfStock = product['status'] == 'Out of Stock';
 
     return Container(
@@ -327,41 +276,34 @@ class _MyProductsScreenState extends State<MyProductsScreen>
         padding: const EdgeInsets.all(12),
         child: Row(
           children: [
-            // ── Product Image ──
             _productImage(product),
             const SizedBox(width: 14),
-
-            // ── Product Info ──
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    product['name'],
+                    product['name'] as String? ?? '',
                     style: const TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 14,
-                      color: SellerColors.darkText,
-                    ),
+                        fontWeight: FontWeight.bold,
+                        fontSize: 14,
+                        color: SellerColors.darkText),
                   ),
                   const SizedBox(height: 4),
                   Text(
-                    product['category'],
+                    product['category'] as String? ?? '',
                     style: const TextStyle(
-                      color: SellerColors.subText,
-                      fontSize: 12,
-                    ),
+                        color: SellerColors.subText, fontSize: 12),
                   ),
                   const SizedBox(height: 6),
                   Row(
                     children: [
                       Text(
-                        product['price'],
+                        product['price'] as String? ?? '',
                         style: const TextStyle(
-                          color: SellerColors.primary,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 14,
-                        ),
+                            color: SellerColors.primary,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 14),
                       ),
                       const SizedBox(width: 10),
                       Container(
@@ -378,10 +320,11 @@ class _MyProductsScreenState extends State<MyProductsScreen>
                               ? 'Out of Stock'
                               : 'Stock: ${product['stock']}',
                           style: TextStyle(
-                            color: isOutOfStock ? Colors.red : Colors.green,
-                            fontSize: 10,
-                            fontWeight: FontWeight.bold,
-                          ),
+                              color: isOutOfStock
+                                  ? Colors.red
+                                  : Colors.green,
+                              fontSize: 10,
+                              fontWeight: FontWeight.bold),
                         ),
                       ),
                     ],
@@ -389,34 +332,27 @@ class _MyProductsScreenState extends State<MyProductsScreen>
                 ],
               ),
             ),
-
-            // ── Edit + Delete Buttons ──
             Column(
               children: [
-                // ✅ Edit Button — EditProductScreen pe jata hai
                 IconButton(
                   onPressed: () => Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (_) => EditProductScreen(product: product),
+                      builder: (_) => EditProductScreen(
+                        product: product,
+                        productIndex: originalIndex,
+                      ),
                     ),
                   ),
-                  icon: const Icon(
-                    Icons.edit_outlined,
-                    color: SellerColors.primary,
-                    size: 20,
-                  ),
+                  icon: const Icon(Icons.edit_outlined,
+                      color: SellerColors.primary, size: 20),
                   tooltip: 'Edit',
                 ),
-
-                // ✅ Delete Button — Dialog dikhata hai
                 IconButton(
-                  onPressed: () => _deleteDialog(product['name']),
-                  icon: const Icon(
-                    Icons.delete_outline,
-                    color: Colors.red,
-                    size: 20,
-                  ),
+                  onPressed: () =>
+                      _deleteDialog(context, originalIndex, product['name']),
+                  icon: const Icon(Icons.delete_outline,
+                      color: Colors.red, size: 20),
                   tooltip: 'Delete',
                 ),
               ],
@@ -439,18 +375,17 @@ class _MyProductsScreenState extends State<MyProductsScreen>
           width: 70,
           height: 70,
           fit: BoxFit.cover,
-          errorBuilder: (_, __, ___) => _fallbackProductImage(product),
+          errorBuilder: (_, __, ___) => _fallbackImage(product),
         ),
       );
     }
-
-    return _fallbackProductImage(product);
+    return _fallbackImage(product);
   }
 
-  Widget _fallbackProductImage(Map<String, dynamic> product) {
+  Widget _fallbackImage(Map<String, dynamic> product) {
     final color = product['color'] as Color? ?? SellerColors.primary;
-    final icon = product['image'] as IconData? ?? Icons.inventory_2_outlined;
-
+    final icon =
+        product['image'] as IconData? ?? Icons.inventory_2_outlined;
     return Container(
       width: 70,
       height: 70,
@@ -463,14 +398,16 @@ class _MyProductsScreenState extends State<MyProductsScreen>
   }
 
   // ═══ Delete Dialog ═══
-  void _deleteDialog(String name) {
+  void _deleteDialog(BuildContext context, int index, String name) {
     showDialog(
       context: context,
       builder: (_) => AlertDialog(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16)),
         title: const Row(
           children: [
-            Icon(Icons.warning_amber_rounded, color: Colors.red, size: 24),
+            Icon(Icons.warning_amber_rounded,
+                color: Colors.red, size: 24),
             SizedBox(width: 8),
             Text('Delete Product',
                 style: TextStyle(fontWeight: FontWeight.bold)),
@@ -486,11 +423,16 @@ class _MyProductsScreenState extends State<MyProductsScreen>
           ElevatedButton(
             style: ElevatedButton.styleFrom(
               backgroundColor: Colors.red,
+              minimumSize: const Size(80, 40),
               shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(10)),
             ),
-            onPressed: () => Navigator.pop(context),
-            child: const Text('Delete', style: TextStyle(color: Colors.white)),
+            onPressed: () {
+              Navigator.pop(context);
+              context.read<ProductProvider>().deleteProduct(index);
+            },
+            child: const Text('Delete',
+                style: TextStyle(color: Colors.white)),
           ),
         ],
       ),

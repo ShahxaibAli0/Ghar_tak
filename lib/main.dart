@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'providers/auth_provider.dart';
 import 'providers/cart_provider.dart';
 import 'providers/offer_provider.dart';
+import 'providers/product_provider.dart';
 import 'screens/auth/login_screen.dart';
 import 'screens/auth/signup_screen.dart';
 import 'screens/auth/splash_screen.dart';
@@ -25,6 +26,7 @@ class GharTakApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => AuthProvider()),
         ChangeNotifierProvider(create: (_) => CartProvider()),
         ChangeNotifierProvider(create: (_) => OfferProvider()),
+        ChangeNotifierProvider(create: (_) => ProductProvider()),
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
@@ -55,9 +57,9 @@ class GharTakApp extends StatelessWidget {
         routes: {
           // ── Core ──
           '/splash':  (context) => const SplashScreen(),
-          '/login':   (context) => LoginScreen(),
+          '/login':   (context) => const LoginScreen(),
           '/signup':  (context) => const SignupScreen(),
-          '/home':    (context) => HomeScreen(),
+          '/home':    (context) => const HomeScreen(),
           // ── Seller ──
           '/seller-splash': (context) => const SellerSplashScreen(),
           '/seller-home':   (context) => const SellerBottomNav(),

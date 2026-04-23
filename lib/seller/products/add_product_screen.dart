@@ -2,7 +2,10 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:provider/provider.dart';
+import '../../providers/product_provider.dart';
 import '../widgets/seller_colors.dart';
+import 'my_products_screen.dart';
 
 class AddProductScreen extends StatefulWidget {
   const AddProductScreen({super.key});
@@ -169,7 +172,7 @@ class _AddProductScreenState extends State<AddProductScreen> {
     _imagesFieldKey.currentState?.didChange(List<XFile>.from(_selectedImages));
   }
 
-  void _submitProduct() {
+  Future<void> _submitProduct() async {
     final isValid = _formKey.currentState!.validate();
     if (!isValid) {
       _showSnackBar('Please fix the highlighted fields.', isError: true);
@@ -186,16 +189,76 @@ class _AddProductScreenState extends State<AddProductScreen> {
       'price': 'Rs. ${_priceController.text.trim()}',
       'stock': stock,
       'status': stock > 0 ? 'Active' : 'Out of Stock',
-      'image': _categoryIcon(selectedCategory!),
-      'color': _categoryColor(selectedCategory!),
       'imagePaths': _selectedImages.map((image) => image.path).toList(),
-      'imagePath': _selectedImages.first.path,
+      'imagePath': _selectedImages.isEmpty ? '' : _selectedImages.first.path,
       'discount': _discountController.text.trim(),
       'weight': _weightController.text.trim(),
       'delivery': _deliveryController.text.trim(),
     };
 
-    Navigator.pop(context, product);
+    await context.read<ProductProvider>().addProduct(product);
+
+    if (!mounted) return;
+    setState(() => _isSubmitting = false);
+    _showSuccessDialog();
+  }
+
+  void _showSuccessDialog() {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (_) => AlertDialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const SizedBox(height: 8),
+            Container(
+              padding: const EdgeInsets.all(16),
+              decoration: const BoxDecoration(
+                color: Color(0xFFE8F5E9),
+                shape: BoxShape.circle,
+              ),
+              child: const Icon(Icons.check_circle,
+                  color: SellerColors.primary, size: 56),
+            ),
+            const SizedBox(height: 16),
+            const Text(
+              'Product Published!',
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 8),
+            const Text(
+              'Your product is now live and visible\nto customers.',
+              textAlign: TextAlign.center,
+              style: TextStyle(color: Colors.grey, fontSize: 13),
+            ),
+            const SizedBox(height: 20),
+            SizedBox(
+              width: double.infinity,
+              child: ElevatedButton(
+                onPressed: () {
+                  Navigator.pop(context); // close dialog
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(
+                        builder: (_) => const MyProductsScreen()),
+                  );
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: SellerColors.primary,
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10)),
+                ),
+                child: const Text('Great!',
+                    style: TextStyle(fontSize: 16, color: Colors.white)),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 
   IconData _categoryIcon(String category) {

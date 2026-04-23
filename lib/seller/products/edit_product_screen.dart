@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import '../../providers/product_provider.dart';
 import '../widgets/seller_colors.dart';
 
 class EditProductScreen extends StatefulWidget {
   final Map<String, dynamic> product;
-  const EditProductScreen({super.key, required this.product});
+  final int productIndex;
+  const EditProductScreen(
+      {super.key, required this.product, required this.productIndex});
 
   @override
   State<EditProductScreen> createState() => _EditProductScreenState();
@@ -433,7 +437,7 @@ class _EditProductScreenState extends State<EditProductScreen> {
           Switch(
             value: _isActive,
             onChanged: (val) => setState(() => _isActive = val),
-            activeColor: SellerColors.primary,
+            activeThumbColor: SellerColors.primary,
           ),
         ],
       ),
@@ -520,7 +524,7 @@ class _EditProductScreenState extends State<EditProductScreen> {
     return Padding(
       padding: const EdgeInsets.only(bottom: 12),
       child: DropdownButtonFormField<String>(
-        value: selectedCategory,
+        initialValue: selectedCategory,
         decoration:
             _inputDecoration('Category', Icons.category_outlined),
         dropdownColor: Colors.white,
@@ -554,6 +558,25 @@ class _EditProductScreenState extends State<EditProductScreen> {
             ),
             onPressed: () {
               if (_formKey.currentState!.validate()) {
+                final stock =
+                    int.tryParse(_stockController.text.trim()) ?? 0;
+                final updated = {
+                  ...widget.product,
+                  'name': _nameController.text.trim(),
+                  'description': _descController.text.trim(),
+                  'category': selectedCategory ?? widget.product['category'],
+                  'price': 'Rs. ${_priceController.text.trim()}',
+                  'stock': stock,
+                  'status': _isActive
+                      ? (stock > 0 ? 'Active' : 'Out of Stock')
+                      : 'Inactive',
+                  'discount': _discountController.text.trim(),
+                  'weight': _weightController.text.trim(),
+                  'delivery': _deliveryController.text.trim(),
+                };
+                context
+                    .read<ProductProvider>()
+                    .updateProduct(widget.productIndex, updated);
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(
                     content: const Row(
@@ -645,8 +668,11 @@ class _EditProductScreenState extends State<EditProductScreen> {
                   borderRadius: BorderRadius.circular(10)),
             ),
             onPressed: () {
-              Navigator.pop(context);
-              Navigator.pop(context);
+              context
+                  .read<ProductProvider>()
+                  .deleteProduct(widget.productIndex);
+              Navigator.pop(context); // close dialog
+              Navigator.pop(context); // back to my products
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
                   content: const Row(
