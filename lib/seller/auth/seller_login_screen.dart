@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:flutter/services.dart';
+
 import '../widgets/seller_colors.dart';
+import 'seller_auth_store.dart';
 import 'seller_register_screen.dart';
 
 class SellerLoginScreen extends StatefulWidget {
@@ -11,14 +13,23 @@ class SellerLoginScreen extends StatefulWidget {
 }
 
 class _SellerLoginScreenState extends State<SellerLoginScreen> {
-  static const _passwordKey = 'seller_password';
+  static final RegExp _emailRegex = RegExp(
+    r'^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$',
+  );
 
   final _formKey = GlobalKey<FormState>();
-  final _secureStorage = const FlutterSecureStorage();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   bool _obscurePassword = true;
+  bool _rememberMe = false;
   bool _isLoggingIn = false;
+  String? _errorMessage;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadRememberedCredentials();
+  }
 
   @override
   void dispose() {
@@ -27,28 +38,59 @@ class _SellerLoginScreenState extends State<SellerLoginScreen> {
     super.dispose();
   }
 
-  Future<void> _login() async {
-    if (!_formKey.currentState!.validate()) return;
-
-    setState(() => _isLoggingIn = true);
-
-    try {
-      final savedPassword = await _secureStorage.read(key: _passwordKey);
-      if (savedPassword != null &&
-          _passwordController.text.trim() != savedPassword) {
-        if (!mounted) return;
-        setState(() => _isLoggingIn = false);
-        _showSnackBar('Invalid password. Please try again.', isError: true);
-        return;
-      }
-
-      if (!mounted) return;
-      Navigator.pushReplacementNamed(context, '/seller-home');
-    } catch (_) {
-      if (!mounted) return;
-      setState(() => _isLoggingIn = false);
-      _showSnackBar('Unable to login. Please try again.', isError: true);
+  Future<void> _loadRememberedCredentials() async {
+    final saved = await SellerAuthStore.loadRememberedCredentials();
+    if (!mounted || saved == null) {
+      return;
     }
+
+    setState(() {
+      _emailController.text = saved['email'] ?? '';
+      _passwordController.text = saved['password'] ?? '';
+      _rememberMe = true;
+    });
+  }
+
+  String? _validateEmail(String? value) {
+    final email = value?.trim() ?? '';
+    if (email.isEmpty) {
+      return 'Enter email address';
+    }
+    if (!_emailRegex.hasMatch(email)) {
+      return 'Enter a valid email address';
+    }
+    return null;
+  }
+
+  Future<void> _login() async {
+    if (!_formKey.currentState!.validate()) {
+      return;
+    }
+
+    setState(() {
+      _isLoggingIn = true;
+      _errorMessage = null;
+    });
+
+    final error = await SellerAuthStore.login(
+      email: _emailController.text,
+      password: _passwordController.text,
+      rememberMe: _rememberMe,
+    );
+
+    if (!mounted) {
+      return;
+    }
+
+    if (error != null) {
+      setState(() {
+        _isLoggingIn = false;
+        _errorMessage = error;
+      });
+      return;
+    }
+
+    Navigator.pushReplacementNamed(context, '/seller-home');
   }
 
   @override
@@ -58,7 +100,6 @@ class _SellerLoginScreenState extends State<SellerLoginScreen> {
       body: SingleChildScrollView(
         child: Column(
           children: [
-            // ═══ Green Top Header ═══
             Container(
               width: double.infinity,
               padding: const EdgeInsets.fromLTRB(24, 70, 24, 40),
@@ -77,8 +118,11 @@ class _SellerLoginScreenState extends State<SellerLoginScreen> {
                       color: Colors.white.withValues(alpha: 0.2),
                       shape: BoxShape.circle,
                     ),
-                    child: const Icon(Icons.storefront,
-                        color: Colors.white, size: 54),
+                    child: const Icon(
+                      Icons.storefront,
+                      color: Colors.white,
+                      size: 54,
+                    ),
                   ),
                   const SizedBox(height: 16),
                   const Text(
@@ -102,8 +146,6 @@ class _SellerLoginScreenState extends State<SellerLoginScreen> {
                 ],
               ),
             ),
-
-            // ═══ Login Form ═══
             Padding(
               padding: const EdgeInsets.fromLTRB(24, 36, 24, 24),
               child: Form(
@@ -112,7 +154,7 @@ class _SellerLoginScreenState extends State<SellerLoginScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     const Text(
-                      'Welcome Back! ',
+                      'Welcome Back!',
                       style: TextStyle(
                         fontSize: 22,
                         fontWeight: FontWeight.bold,
@@ -125,20 +167,53 @@ class _SellerLoginScreenState extends State<SellerLoginScreen> {
                       style:
                           TextStyle(color: SellerColors.subText, fontSize: 14),
                     ),
-                    const SizedBox(height: 30),
-
-                    // Email Field
+                    const SizedBox(height: 24),
+                    if (_errorMessage != null) ...[
+                      Container(
+                        width: double.infinity,
+                        padding: const EdgeInsets.all(12),
+                        decoration: BoxDecoration(
+                          color: Colors.red.shade50,
+                          borderRadius: BorderRadius.circular(12),
+                          border: Border.all(color: Colors.red.shade200),
+                        ),
+                        child: Row(
+                          children: [
+                            const Icon(
+                              Icons.error_outline,
+                              color: Colors.red,
+                              size: 18,
+                            ),
+                            const SizedBox(width: 8),
+                            Expanded(
+                              child: Text(
+                                _errorMessage!,
+                                style: const TextStyle(color: Colors.red),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(height: 18),
+                    ],
                     TextFormField(
                       controller: _emailController,
                       keyboardType: TextInputType.emailAddress,
+                      inputFormatters: [
+                        FilteringTextInputFormatter.deny(RegExp(r'\s')),
+                      ],
                       decoration: _inputDecoration(
-                          'Email Address', Icons.email_outlined),
-                      validator: (val) =>
-                          val == null || val.isEmpty ? 'Enter email' : null,
+                        'Email Address',
+                        Icons.email_outlined,
+                      ),
+                      validator: _validateEmail,
+                      onChanged: (_) {
+                        if (_errorMessage != null) {
+                          setState(() => _errorMessage = null);
+                        }
+                      },
                     ),
                     const SizedBox(height: 16),
-
-                    // Password Field
                     TextFormField(
                       controller: _passwordController,
                       obscureText: _obscurePassword,
@@ -153,30 +228,47 @@ class _SellerLoginScreenState extends State<SellerLoginScreen> {
                             color: SellerColors.primary,
                           ),
                           onPressed: () => setState(
-                              () => _obscurePassword = !_obscurePassword),
+                            () => _obscurePassword = !_obscurePassword,
+                          ),
                         ),
                       ),
-                      validator: (val) =>
-                          val == null || val.isEmpty ? 'Enter password' : null,
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Enter password';
+                        }
+                        return null;
+                      },
+                      onChanged: (_) {
+                        if (_errorMessage != null) {
+                          setState(() => _errorMessage = null);
+                        }
+                      },
+                      onFieldSubmitted: (_) {
+                        if (!_isLoggingIn) {
+                          _login();
+                        }
+                      },
                     ),
-
-                    // Forgot Password
-                    Align(
-                      alignment: Alignment.centerRight,
-                      child: TextButton(
-                        onPressed: () {},
-                        child: const Text(
-                          'Forgot Password?',
-                          style: TextStyle(
-                              color: SellerColors.primary,
-                              fontWeight: FontWeight.w600),
-                        ),
+                    const SizedBox(height: 8),
+                    CheckboxListTile(
+                      value: _rememberMe,
+                      onChanged: _isLoggingIn
+                          ? null
+                          : (value) =>
+                              setState(() => _rememberMe = value ?? false),
+                      controlAffinity: ListTileControlAffinity.leading,
+                      contentPadding: EdgeInsets.zero,
+                      dense: true,
+                      title: const Text(
+                        'Remember Me',
+                        style: TextStyle(fontWeight: FontWeight.w600),
+                      ),
+                      subtitle: const Text(
+                        'Auto-fill seller credentials on this device',
+                        style: TextStyle(fontSize: 12),
                       ),
                     ),
-
-                    const SizedBox(height: 10),
-
-                    // ── Login Button ──
+                    const SizedBox(height: 12),
                     SizedBox(
                       width: double.infinity,
                       height: 54,
@@ -184,7 +276,8 @@ class _SellerLoginScreenState extends State<SellerLoginScreen> {
                         style: ElevatedButton.styleFrom(
                           backgroundColor: SellerColors.primary,
                           shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(14)),
+                            borderRadius: BorderRadius.circular(14),
+                          ),
                           elevation: 4,
                           shadowColor:
                               SellerColors.primary.withValues(alpha: 0.4),
@@ -209,42 +302,46 @@ class _SellerLoginScreenState extends State<SellerLoginScreen> {
                               ),
                       ),
                     ),
-
                     const SizedBox(height: 28),
-
-                    // ── Divider ──
                     Row(
                       children: [
                         const Expanded(
-                            child: Divider(color: Color(0xFFDDDDDD))),
+                          child: Divider(color: Color(0xFFDDDDDD)),
+                        ),
                         Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 12),
-                          child: Text('OR',
-                              style: TextStyle(
-                                  color: Colors.grey[400], fontSize: 13)),
+                          child: Text(
+                            'OR',
+                            style: TextStyle(
+                              color: Colors.grey[400],
+                              fontSize: 13,
+                            ),
+                          ),
                         ),
                         const Expanded(
-                            child: Divider(color: Color(0xFFDDDDDD))),
+                          child: Divider(color: Color(0xFFDDDDDD)),
+                        ),
                       ],
                     ),
-
                     const SizedBox(height: 24),
-
-                    // ── New Seller ──
                     SizedBox(
                       width: double.infinity,
                       height: 54,
                       child: OutlinedButton(
                         style: OutlinedButton.styleFrom(
                           side: const BorderSide(
-                              color: SellerColors.primary, width: 2),
+                            color: SellerColors.primary,
+                            width: 2,
+                          ),
                           shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(14)),
+                            borderRadius: BorderRadius.circular(14),
+                          ),
                         ),
-                        onPressed: () => Navigator.push(
+                        onPressed: () => Navigator.pushReplacement(
                           context,
                           MaterialPageRoute(
-                              builder: (_) => const SellerRegisterScreen()),
+                            builder: (_) => const SellerRegisterScreen(),
+                          ),
                         ),
                         child: const Text(
                           'Create New Seller Account',
@@ -256,7 +353,6 @@ class _SellerLoginScreenState extends State<SellerLoginScreen> {
                         ),
                       ),
                     ),
-
                     const SizedBox(height: 30),
                   ],
                 ),
@@ -276,34 +372,26 @@ class _SellerLoginScreenState extends State<SellerLoginScreen> {
       fillColor: SellerColors.lightGreen,
       contentPadding: const EdgeInsets.symmetric(vertical: 16, horizontal: 12),
       border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12), borderSide: BorderSide.none),
+        borderRadius: BorderRadius.circular(12),
+        borderSide: BorderSide.none,
+      ),
       enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12), borderSide: BorderSide.none),
+        borderRadius: BorderRadius.circular(12),
+        borderSide: BorderSide.none,
+      ),
       focusedBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(12),
         borderSide: const BorderSide(color: SellerColors.primary, width: 2),
       ),
-      labelStyle: const TextStyle(color: SellerColors.subText, fontSize: 14),
-    );
-  }
-
-  void _showSnackBar(String message, {bool isError = false}) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Row(
-          children: [
-            Icon(
-              isError ? Icons.error_outline : Icons.check_circle,
-              color: Colors.white,
-            ),
-            const SizedBox(width: 10),
-            Expanded(child: Text(message)),
-          ],
-        ),
-        backgroundColor: isError ? Colors.red : SellerColors.primary,
-        behavior: SnackBarBehavior.floating,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      errorBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(12),
+        borderSide: const BorderSide(color: Colors.red, width: 1),
       ),
+      focusedErrorBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(12),
+        borderSide: const BorderSide(color: Colors.red, width: 1.5),
+      ),
+      labelStyle: const TextStyle(color: SellerColors.subText, fontSize: 14),
     );
   }
 }

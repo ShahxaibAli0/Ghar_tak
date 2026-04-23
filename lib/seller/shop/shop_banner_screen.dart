@@ -2,9 +2,9 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 import '../widgets/seller_colors.dart';
+import 'seller_shop_profile_store.dart';
 import 'shop_form_widgets.dart';
 
 class ShopBannerScreen extends StatefulWidget {
@@ -15,8 +15,6 @@ class ShopBannerScreen extends StatefulWidget {
 }
 
 class _ShopBannerScreenState extends State<ShopBannerScreen> {
-  static const _bannerPathKey = 'seller_shop_banner_path';
-
   final _picker = ImagePicker();
   String? _bannerPath;
   bool _isSaving = false;
@@ -28,9 +26,9 @@ class _ShopBannerScreenState extends State<ShopBannerScreen> {
   }
 
   Future<void> _loadBanner() async {
-    final prefs = await SharedPreferences.getInstance();
+    final profile = await SellerShopProfileStore.load();
     if (!mounted) return;
-    setState(() => _bannerPath = prefs.getString(_bannerPathKey));
+    setState(() => _bannerPath = profile.bannerPath);
   }
 
   Future<void> _showImageSourceSheet() async {
@@ -113,13 +111,12 @@ class _ShopBannerScreenState extends State<ShopBannerScreen> {
     }
 
     setState(() => _isSaving = true);
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setString(_bannerPathKey, path);
+    await SellerShopProfileStore.saveBanner(path);
 
     if (!mounted) return;
     setState(() => _isSaving = false);
     showShopSnackBar(context, 'Shop banner saved successfully.');
-    Navigator.pop(context);
+    Navigator.pop(context, true);
   }
 
   @override

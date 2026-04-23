@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../auth/seller_login_screen.dart';
+import '../auth/seller_auth_store.dart';
+import '../auth/seller_register_screen.dart';
 
 class SellerSplashScreen extends StatefulWidget {
   const SellerSplashScreen({super.key});
@@ -83,13 +85,27 @@ class _SellerSplashScreenState extends State<SellerSplashScreen>
     await Future.delayed(const Duration(milliseconds: 500));
     _taglineController.forward();
 
-    // Navigate to Login
+    final hasSession = await SellerAuthStore.checkSession();
+    final hasAccount = await SellerAuthStore.hasAccount();
+
+    if (!mounted) {
+      return;
+    }
+
     await Future.delayed(const Duration(milliseconds: 1500));
     if (mounted) {
       Navigator.pushReplacement(
         context,
         PageRouteBuilder(
-          pageBuilder: (_, __, ___) => const SellerLoginScreen(),
+          pageBuilder: (_, __, ___) {
+            if (hasSession) {
+              return const _SellerHomeRouteHost();
+            }
+            if (hasAccount) {
+              return const SellerLoginScreen();
+            }
+            return const SellerRegisterScreen();
+          },
           transitionsBuilder: (_, animation, __, child) {
             return FadeTransition(opacity: animation, child: child);
           },
@@ -126,7 +142,6 @@ class _SellerSplashScreenState extends State<SellerSplashScreen>
         ),
         child: Stack(
           children: [
-
             // ── Background Circles ──
             Positioned(
               top: -60,
@@ -136,7 +151,7 @@ class _SellerSplashScreenState extends State<SellerSplashScreen>
                 height: 220,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  color: Colors.white.withOpacity(0.06),
+                  color: Colors.white.withValues(alpha: 0.06),
                 ),
               ),
             ),
@@ -148,7 +163,7 @@ class _SellerSplashScreenState extends State<SellerSplashScreen>
                 height: 280,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  color: Colors.white.withOpacity(0.05),
+                  color: Colors.white.withValues(alpha: 0.05),
                 ),
               ),
             ),
@@ -160,7 +175,7 @@ class _SellerSplashScreenState extends State<SellerSplashScreen>
                 height: 140,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  color: Colors.white.withOpacity(0.04),
+                  color: Colors.white.withValues(alpha: 0.04),
                 ),
               ),
             ),
@@ -170,7 +185,6 @@ class _SellerSplashScreenState extends State<SellerSplashScreen>
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-
                   // Logo
                   FadeTransition(
                     opacity: _logoFade,
@@ -184,7 +198,7 @@ class _SellerSplashScreenState extends State<SellerSplashScreen>
                           borderRadius: BorderRadius.circular(30),
                           boxShadow: [
                             BoxShadow(
-                              color: Colors.black.withOpacity(0.2),
+                              color: Colors.black.withValues(alpha: 0.2),
                               blurRadius: 24,
                               offset: const Offset(0, 8),
                             ),
@@ -229,10 +243,10 @@ class _SellerSplashScreenState extends State<SellerSplashScreen>
                         padding: const EdgeInsets.symmetric(
                             horizontal: 16, vertical: 6),
                         decoration: BoxDecoration(
-                          color: Colors.white.withOpacity(0.2),
+                          color: Colors.white.withValues(alpha: 0.2),
                           borderRadius: BorderRadius.circular(20),
                           border: Border.all(
-                            color: Colors.white.withOpacity(0.4),
+                            color: Colors.white.withValues(alpha: 0.4),
                           ),
                         ),
                         child: const Text(
@@ -256,7 +270,7 @@ class _SellerSplashScreenState extends State<SellerSplashScreen>
                     child: Text(
                       'ہر چیز گھر تک',
                       style: TextStyle(
-                        color: Colors.white.withOpacity(0.8),
+                        color: Colors.white.withValues(alpha: 0.8),
                         fontSize: 16,
                         letterSpacing: 1,
                       ),
@@ -279,7 +293,7 @@ class _SellerSplashScreenState extends State<SellerSplashScreen>
                       width: 36,
                       height: 36,
                       child: CircularProgressIndicator(
-                        color: Colors.white.withOpacity(0.7),
+                        color: Colors.white.withValues(alpha: 0.7),
                         strokeWidth: 2.5,
                       ),
                     ),
@@ -287,7 +301,7 @@ class _SellerSplashScreenState extends State<SellerSplashScreen>
                     Text(
                       'Loading your store...',
                       style: TextStyle(
-                        color: Colors.white.withOpacity(0.65),
+                        color: Colors.white.withValues(alpha: 0.65),
                         fontSize: 13,
                       ),
                     ),
@@ -297,6 +311,36 @@ class _SellerSplashScreenState extends State<SellerSplashScreen>
             ),
           ],
         ),
+      ),
+    );
+  }
+}
+
+class _SellerHomeRouteHost extends StatefulWidget {
+  const _SellerHomeRouteHost();
+
+  @override
+  State<_SellerHomeRouteHost> createState() => _SellerHomeRouteHostState();
+}
+
+class _SellerHomeRouteHostState extends State<_SellerHomeRouteHost> {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) {
+        return;
+      }
+      Navigator.pushReplacementNamed(context, '/seller-home');
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return const Scaffold(
+      backgroundColor: Color(0xFF00A651),
+      body: Center(
+        child: CircularProgressIndicator(color: Colors.white),
       ),
     );
   }

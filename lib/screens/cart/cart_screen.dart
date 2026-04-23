@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../models/cart_item.dart';
 import '../../providers/cart_provider.dart';
+import '../../widgets/cart_item_image.dart';
+import 'checkout_screen.dart';
 
 class CartScreen extends StatelessWidget {
   const CartScreen({super.key});
@@ -21,7 +23,8 @@ class CartScreen extends StatelessWidget {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Icon(Icons.shopping_cart_outlined, size: 80, color: Colors.grey),
+                  Icon(Icons.shopping_cart_outlined,
+                      size: 80, color: Colors.grey),
                   SizedBox(height: 16),
                   Text(
                     "Your Cart is Empty",
@@ -46,7 +49,8 @@ class CartScreen extends StatelessWidget {
             actions: [
               TextButton(
                 onPressed: () => _confirmClear(context, cart),
-                child: const Text("Clear All", style: TextStyle(color: Colors.white)),
+                child: const Text("Clear All",
+                    style: TextStyle(color: Colors.white)),
               ),
             ],
           ),
@@ -112,17 +116,10 @@ class _CartItemCard extends StatelessWidget {
           children: [
             ClipRRect(
               borderRadius: BorderRadius.circular(8),
-              child: Image.network(
-                item.image,
+              child: CartItemImage(
+                imagePath: item.image,
                 height: 65,
                 width: 65,
-                fit: BoxFit.cover,
-                errorBuilder: (_, __, ___) => Container(
-                  height: 65,
-                  width: 65,
-                  color: Colors.grey.shade200,
-                  child: const Icon(Icons.shopping_bag_outlined, color: Colors.grey, size: 30),
-                ),
               ),
             ),
             const SizedBox(width: 12),
@@ -132,7 +129,8 @@ class _CartItemCard extends StatelessWidget {
                 children: [
                   Text(
                     item.name,
-                    style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
+                    style: const TextStyle(
+                        fontWeight: FontWeight.bold, fontSize: 15),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),
@@ -159,7 +157,8 @@ class _CartItemCard extends StatelessWidget {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     GestureDetector(
-                      onTap: () => context.read<CartProvider>().decreaseQuantity(index),
+                      onTap: () =>
+                          context.read<CartProvider>().decreaseQuantity(index),
                       child: Container(
                         padding: const EdgeInsets.all(4),
                         decoration: BoxDecoration(
@@ -167,14 +166,16 @@ class _CartItemCard extends StatelessWidget {
                           shape: BoxShape.circle,
                           border: Border.all(color: Colors.red.shade200),
                         ),
-                        child: const Icon(Icons.remove, size: 16, color: Colors.red),
+                        child: const Icon(Icons.remove,
+                            size: 16, color: Colors.red),
                       ),
                     ),
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 10),
                       child: Text(
                         "${item.quantity}",
-                        style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                        style: const TextStyle(
+                            fontSize: 16, fontWeight: FontWeight.bold),
                       ),
                     ),
                     GestureDetector(
@@ -193,7 +194,8 @@ class _CartItemCard extends StatelessWidget {
                           shape: BoxShape.circle,
                           border: Border.all(color: Colors.green.shade300),
                         ),
-                        child: const Icon(Icons.add, size: 16, color: Colors.green),
+                        child: const Icon(Icons.add,
+                            size: 16, color: Colors.green),
                       ),
                     ),
                   ],
@@ -256,18 +258,26 @@ class _CheckoutBar extends StatelessWidget {
           ),
           const SizedBox(height: 12),
           ElevatedButton(
-            onPressed: () {
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
-                  content: Text("Checkout coming soon!"),
-                  backgroundColor: Colors.green,
-                ),
+            onPressed: () async {
+              final orderPlaced = await Navigator.push<bool>(
+                context,
+                CheckoutScreen.route(),
               );
+
+              if (orderPlaced == true && context.mounted) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text("Order placed successfully!"),
+                    backgroundColor: Colors.green,
+                  ),
+                );
+              }
             },
             style: ElevatedButton.styleFrom(
               backgroundColor: Colors.green,
               minimumSize: const Size(double.infinity, 50),
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12)),
             ),
             child: const Text(
               "Proceed to Checkout",

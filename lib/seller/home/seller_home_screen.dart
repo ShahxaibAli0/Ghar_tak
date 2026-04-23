@@ -1,7 +1,10 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import '../widgets/seller_colors.dart';
 import '../notifications/seller_notifications_screen.dart';
 import '../orders/seller_orders_screen.dart';
+import '../shop/seller_shop_profile_store.dart';
 
 class SellerHomeScreen extends StatelessWidget {
   final Function(int)? onTabSwitch;
@@ -11,19 +14,23 @@ class SellerHomeScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFFF4F6F8),
-      body: CustomScrollView(
-        slivers: [
-          SliverToBoxAdapter(
-              child: _buildHeader(context)),
-          SliverToBoxAdapter(
-              child: _buildOverviewCards()),
-          SliverToBoxAdapter(
-              child: _buildOrderStatus(context)),
-          SliverToBoxAdapter(
-              child: _buildRecentOrders(context)),
-          const SliverToBoxAdapter(
-              child: SizedBox(height: 30)),
-        ],
+      body: FutureBuilder<SellerShopProfile>(
+        future: SellerShopProfileStore.load(),
+        initialData: SellerShopProfileStore.fallbackProfile,
+        builder: (context, snapshot) {
+          final profile =
+              snapshot.data ?? SellerShopProfileStore.fallbackProfile;
+
+          return CustomScrollView(
+            slivers: [
+              SliverToBoxAdapter(child: _buildHeader(context, profile)),
+              SliverToBoxAdapter(child: _buildOverviewCards()),
+              SliverToBoxAdapter(child: _buildOrderStatus(context)),
+              SliverToBoxAdapter(child: _buildRecentOrders(context)),
+              const SliverToBoxAdapter(child: SizedBox(height: 30)),
+            ],
+          );
+        },
       ),
     );
   }
@@ -31,7 +38,7 @@ class SellerHomeScreen extends StatelessWidget {
   // ═══════════════════════════════
   // LUXURY GRADIENT HEADER
   // ═══════════════════════════════
-  Widget _buildHeader(BuildContext context) {
+  Widget _buildHeader(BuildContext context, SellerShopProfile profile) {
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.fromLTRB(20, 56, 20, 28),
@@ -55,12 +62,10 @@ class SellerHomeScreen extends StatelessWidget {
         children: [
           // ── Top Row ──
           Row(
-            mainAxisAlignment:
-                MainAxisAlignment.spaceBetween,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Column(
-                crossAxisAlignment:
-                    CrossAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Row(
                     children: [
@@ -76,8 +81,7 @@ class SellerHomeScreen extends StatelessWidget {
                       Text(
                         'SELLER CENTER',
                         style: TextStyle(
-                          color: Colors.white
-                              .withOpacity(0.75),
+                          color: Colors.white.withOpacity(0.75),
                           fontSize: 10,
                           fontWeight: FontWeight.w600,
                           letterSpacing: 1.5,
@@ -86,9 +90,9 @@ class SellerHomeScreen extends StatelessWidget {
                     ],
                   ),
                   const SizedBox(height: 5),
-                  const Text(
-                    'Ahmed Electronics',
-                    style: TextStyle(
+                  Text(
+                    profile.shopName,
+                    style: const TextStyle(
                       color: Colors.white,
                       fontSize: 20,
                       fontWeight: FontWeight.bold,
@@ -104,23 +108,19 @@ class SellerHomeScreen extends StatelessWidget {
                     onTap: () => Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (_) => const
-                            SellerNotificationsScreen(),
+                        builder: (_) => const SellerNotificationsScreen(),
                       ),
                     ),
                     child: Stack(
                       clipBehavior: Clip.none,
                       children: [
                         Container(
-                          padding:
-                              const EdgeInsets.all(9),
+                          padding: const EdgeInsets.all(9),
                           decoration: BoxDecoration(
-                            color: Colors.white
-                                .withOpacity(0.15),
+                            color: Colors.white.withOpacity(0.15),
                             shape: BoxShape.circle,
                             border: Border.all(
-                              color: Colors.white
-                                  .withOpacity(0.25),
+                              color: Colors.white.withOpacity(0.25),
                               width: 1,
                             ),
                           ),
@@ -140,8 +140,7 @@ class SellerHomeScreen extends StatelessWidget {
                               color: Colors.red[400],
                               shape: BoxShape.circle,
                               border: Border.all(
-                                color: const Color(
-                                    0xFF00703F),
+                                color: const Color(0xFF00703F),
                                 width: 1.5,
                               ),
                             ),
@@ -156,17 +155,14 @@ class SellerHomeScreen extends StatelessWidget {
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
                       border: Border.all(
-                        color:
-                            Colors.white.withOpacity(0.4),
+                        color: Colors.white.withOpacity(0.4),
                         width: 2,
                       ),
                     ),
                     child: CircleAvatar(
                       radius: 20,
-                      backgroundColor:
-                          Colors.white.withOpacity(0.18),
-                      child: const Icon(Icons.person,
-                          color: Colors.white, size: 21),
+                      backgroundColor: Colors.white.withOpacity(0.18),
+                      child: _buildSellerAvatar(profile),
                     ),
                   ),
                 ],
@@ -178,8 +174,7 @@ class SellerHomeScreen extends StatelessWidget {
 
           // ── Earnings Row ──
           Container(
-            padding: const EdgeInsets.symmetric(
-                horizontal: 6, vertical: 16),
+            padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 16),
             decoration: BoxDecoration(
               color: Colors.black.withOpacity(0.12),
               borderRadius: BorderRadius.circular(18),
@@ -189,8 +184,7 @@ class SellerHomeScreen extends StatelessWidget {
               ),
             ),
             child: Row(
-              mainAxisAlignment:
-                  MainAxisAlignment.spaceAround,
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
                 _earningItem(
                   'Today',
@@ -217,13 +211,30 @@ class SellerHomeScreen extends StatelessWidget {
     );
   }
 
-  Widget _earningItem(
-      String label, String value, IconData icon) {
+  Widget _buildSellerAvatar(SellerShopProfile profile) {
+    final logoPath = profile.logoPath;
+    if (logoPath != null &&
+        logoPath.isNotEmpty &&
+        File(logoPath).existsSync()) {
+      return ClipOval(
+        child: Image.file(
+          File(logoPath),
+          width: 40,
+          height: 40,
+          fit: BoxFit.cover,
+          errorBuilder: (_, __, ___) =>
+              const Icon(Icons.store, color: Colors.white, size: 21),
+        ),
+      );
+    }
+
+    return const Icon(Icons.store, color: Colors.white, size: 21);
+  }
+
+  Widget _earningItem(String label, String value, IconData icon) {
     return Column(
       children: [
-        Icon(icon,
-            color: Colors.white.withOpacity(0.7),
-            size: 15),
+        Icon(icon, color: Colors.white.withOpacity(0.7), size: 15),
         const SizedBox(height: 5),
         Text(
           value,
@@ -287,8 +298,7 @@ class SellerHomeScreen extends StatelessWidget {
             crossAxisSpacing: 12,
             mainAxisSpacing: 12,
             shrinkWrap: true,
-            physics:
-                const NeverScrollableScrollPhysics(),
+            physics: const NeverScrollableScrollPhysics(),
             childAspectRatio: 1.65,
             children: [
               _statCard(
@@ -326,8 +336,8 @@ class SellerHomeScreen extends StatelessWidget {
     );
   }
 
-  Widget _statCard(String title, String value,
-      IconData icon, Color color, String sub) {
+  Widget _statCard(
+      String title, String value, IconData icon, Color color, String sub) {
     return Container(
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
@@ -346,8 +356,7 @@ class SellerHomeScreen extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Row(
-            mainAxisAlignment:
-                MainAxisAlignment.spaceBetween,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
                 title,
@@ -362,8 +371,7 @@ class SellerHomeScreen extends StatelessWidget {
                   color: color.withOpacity(0.1),
                   borderRadius: BorderRadius.circular(8),
                 ),
-                child:
-                    Icon(icon, color: color, size: 15),
+                child: Icon(icon, color: color, size: 15),
               ),
             ],
           ),
@@ -415,8 +423,7 @@ class SellerHomeScreen extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Row(
-              mainAxisAlignment:
-                  MainAxisAlignment.spaceBetween,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 const Text(
                   'Order Pipeline',
@@ -430,8 +437,7 @@ class SellerHomeScreen extends StatelessWidget {
                   onTap: () => Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (_) =>
-                          const SellerOrdersScreen(),
+                      builder: (_) => const SellerOrdersScreen(),
                     ),
                   ),
                   child: const Text(
@@ -447,23 +453,18 @@ class SellerHomeScreen extends StatelessWidget {
             ),
             const SizedBox(height: 16),
             Row(
-              mainAxisAlignment:
-                  MainAxisAlignment.spaceAround,
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
-                _pipelineDot('Pending', '18',
-                    Colors.orange,
-                    Icons.hourglass_top),
+                _pipelineDot(
+                    'Pending', '18', Colors.orange, Icons.hourglass_top),
                 _pipelineArrow(),
-                _pipelineDot('Processing', '24',
-                    Colors.blue, Icons.sync),
+                _pipelineDot('Processing', '24', Colors.blue, Icons.sync),
                 _pipelineArrow(),
-                _pipelineDot('Shipped', '32',
-                    Colors.purple,
-                    Icons.local_shipping),
+                _pipelineDot(
+                    'Shipped', '32', Colors.purple, Icons.local_shipping),
                 _pipelineArrow(),
-                _pipelineDot('Delivered', '210',
-                    Colors.green,
-                    Icons.check_circle),
+                _pipelineDot(
+                    'Delivered', '210', Colors.green, Icons.check_circle),
               ],
             ),
           ],
@@ -472,8 +473,7 @@ class SellerHomeScreen extends StatelessWidget {
     );
   }
 
-  Widget _pipelineDot(String label, String count,
-      Color color, IconData icon) {
+  Widget _pipelineDot(String label, String count, Color color, IconData icon) {
     return Column(
       children: [
         Container(
@@ -558,8 +558,7 @@ class SellerHomeScreen extends StatelessWidget {
         child: Column(
           children: [
             Row(
-              mainAxisAlignment:
-                  MainAxisAlignment.spaceBetween,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 const Text(
                   'Recent Orders',
@@ -573,8 +572,7 @@ class SellerHomeScreen extends StatelessWidget {
                   onTap: () => Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (_) =>
-                          const SellerOrdersScreen(),
+                      builder: (_) => const SellerOrdersScreen(),
                     ),
                   ),
                   child: const Text(
@@ -613,8 +611,7 @@ class SellerHomeScreen extends StatelessWidget {
           const SizedBox(width: 12),
           Expanded(
             child: Column(
-              crossAxisAlignment:
-                  CrossAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
                   order['name'],
@@ -647,13 +644,10 @@ class SellerHomeScreen extends StatelessWidget {
               ),
               const SizedBox(height: 3),
               Container(
-                padding: const EdgeInsets.symmetric(
-                    horizontal: 8, vertical: 3),
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                 decoration: BoxDecoration(
-                  color: (order['color'] as Color)
-                      .withOpacity(0.1),
-                  borderRadius:
-                      BorderRadius.circular(20),
+                  color: (order['color'] as Color).withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(20),
                 ),
                 child: Text(
                   order['status'],
@@ -671,4 +665,3 @@ class SellerHomeScreen extends StatelessWidget {
     );
   }
 }
-

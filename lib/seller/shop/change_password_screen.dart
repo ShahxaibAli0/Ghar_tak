@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
+import '../auth/seller_auth_store.dart';
 import '../widgets/seller_colors.dart';
 import 'shop_form_widgets.dart';
 
@@ -12,10 +12,7 @@ class ChangePasswordScreen extends StatefulWidget {
 }
 
 class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
-  static const _passwordKey = 'seller_password';
-
   final _formKey = GlobalKey<FormState>();
-  final _secureStorage = const FlutterSecureStorage();
   final _currentPasswordController = TextEditingController();
   final _newPasswordController = TextEditingController();
   final _confirmPasswordController = TextEditingController();
@@ -42,31 +39,23 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
 
     setState(() => _isSaving = true);
 
-    try {
-      final storedPassword = await _secureStorage.read(key: _passwordKey);
-      final currentPassword = _currentPasswordController.text.trim();
-      final newPassword = _newPasswordController.text.trim();
+    final error = await SellerAuthStore.changePassword(
+      currentPassword: _currentPasswordController.text.trim(),
+      newPassword: _newPasswordController.text.trim(),
+    );
 
-      if (storedPassword != null && currentPassword != storedPassword) {
-        if (!mounted) return;
-        setState(() => _isSaving = false);
-        showShopSnackBar(context, 'Current password is incorrect.',
-            isError: true);
-        return;
-      }
-
-      await _secureStorage.write(key: _passwordKey, value: newPassword);
-
-      if (!mounted) return;
-      setState(() => _isSaving = false);
-      showShopSnackBar(context, 'Password changed successfully.');
-      Navigator.pop(context);
-    } catch (_) {
-      if (!mounted) return;
-      setState(() => _isSaving = false);
-      showShopSnackBar(context, 'Unable to change password. Please try again.',
-          isError: true);
+    if (!mounted) {
+      return;
     }
+
+    setState(() => _isSaving = false);
+    if (error != null) {
+      showShopSnackBar(context, error, isError: true);
+      return;
+    }
+
+    showShopSnackBar(context, 'Password changed successfully.');
+    Navigator.pop(context);
   }
 
   String? _currentPasswordValidator(String? value) {

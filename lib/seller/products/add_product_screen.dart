@@ -14,7 +14,8 @@ class AddProductScreen extends StatefulWidget {
   State<AddProductScreen> createState() => _AddProductScreenState();
 }
 
-class _AddProductScreenState extends State<AddProductScreen> {
+class _AddProductScreenState extends State<AddProductScreen>
+    with WidgetsBindingObserver {
   static const int _maxImages = 8;
 
   final _formKey = GlobalKey<FormState>();
@@ -42,7 +43,14 @@ class _AddProductScreenState extends State<AddProductScreen> {
   ];
 
   @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addObserver(this);
+  }
+
+  @override
   void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
     _nameController.dispose();
     _descriptionController.dispose();
     _priceController.dispose();
@@ -51,6 +59,30 @@ class _AddProductScreenState extends State<AddProductScreen> {
     _weightController.dispose();
     _deliveryController.dispose();
     super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) {
+      _retrieveLostData();
+    }
+  }
+
+  Future<void> _retrieveLostData() async {
+    final response = await _picker.retrieveLostData();
+    if (response.isEmpty || !mounted) return;
+    if (response.files != null && response.files!.isNotEmpty) {
+      final existingPaths =
+          _selectedImages.map((f) => f.path).toSet();
+      final remaining = _maxImages - _selectedImages.length;
+      final newImages = response.files!
+          .where((f) => !existingPaths.contains(f.path))
+          .take(remaining)
+          .toList();
+      if (newImages.isEmpty) return;
+      setState(() => _selectedImages.addAll(newImages));
+      _syncImageField();
+    }
   }
 
   Future<void> _showImageSourceSheet() async {
@@ -259,40 +291,6 @@ class _AddProductScreenState extends State<AddProductScreen> {
         ),
       ),
     );
-  }
-
-  IconData _categoryIcon(String category) {
-    switch (category) {
-      case 'Grocery':
-        return Icons.local_grocery_store;
-      case 'Hardware':
-        return Icons.hardware;
-      case 'Electric':
-        return Icons.electrical_services;
-      case 'Restaurant':
-        return Icons.restaurant;
-      case 'Pharmacies':
-        return Icons.medication;
-      default:
-        return Icons.inventory_2_outlined;
-    }
-  }
-
-  Color _categoryColor(String category) {
-    switch (category) {
-      case 'Grocery':
-        return Colors.green;
-      case 'Hardware':
-        return Colors.blueGrey;
-      case 'Electric':
-        return Colors.amber;
-      case 'Restaurant':
-        return Colors.deepOrange;
-      case 'Pharmacies':
-        return Colors.red;
-      default:
-        return SellerColors.primary;
-    }
   }
 
   void _showSnackBar(String message, {bool isError = false}) {

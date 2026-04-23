@@ -2,9 +2,9 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 import '../widgets/seller_colors.dart';
+import 'seller_shop_profile_store.dart';
 import 'shop_form_widgets.dart';
 
 class ShopProfileScreen extends StatefulWidget {
@@ -15,16 +15,14 @@ class ShopProfileScreen extends StatefulWidget {
 }
 
 class _ShopProfileScreenState extends State<ShopProfileScreen> {
-  static const _shopNameKey = 'seller_shop_name';
-  static const _shopLogoKey = 'seller_shop_logo_path';
-  static const _shopDescriptionKey = 'seller_shop_description';
-
   final _formKey = GlobalKey<FormState>();
   final _logoFieldKey = GlobalKey<FormFieldState<String>>();
   final _picker = ImagePicker();
-  final _shopNameController = TextEditingController(text: 'Ahmed Electronics');
+  final _shopNameController = TextEditingController(
+    text: SellerShopProfileStore.defaultShopName,
+  );
   final _descriptionController = TextEditingController(
-    text: 'Best electronics shop in Karachi. Quality products at best prices.',
+    text: SellerShopProfileStore.defaultShopDescription,
   );
 
   String? _logoPath;
@@ -44,15 +42,13 @@ class _ShopProfileScreenState extends State<ShopProfileScreen> {
   }
 
   Future<void> _loadProfile() async {
-    final prefs = await SharedPreferences.getInstance();
+    final profile = await SellerShopProfileStore.load();
     if (!mounted) return;
 
     setState(() {
-      _shopNameController.text =
-          prefs.getString(_shopNameKey) ?? _shopNameController.text;
-      _descriptionController.text =
-          prefs.getString(_shopDescriptionKey) ?? _descriptionController.text;
-      _logoPath = prefs.getString(_shopLogoKey);
+      _shopNameController.text = profile.shopName;
+      _descriptionController.text = profile.shopDescription;
+      _logoPath = profile.logoPath;
     });
     _logoFieldKey.currentState?.didChange(_logoPath);
   }
@@ -139,18 +135,16 @@ class _ShopProfileScreenState extends State<ShopProfileScreen> {
     }
 
     setState(() => _isSaving = true);
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setString(_shopNameKey, _shopNameController.text.trim());
-    await prefs.setString(
-      _shopDescriptionKey,
-      _descriptionController.text.trim(),
+    await SellerShopProfileStore.saveProfile(
+      shopName: _shopNameController.text,
+      shopDescription: _descriptionController.text,
+      logoPath: _logoPath!,
     );
-    await prefs.setString(_shopLogoKey, _logoPath!);
 
     if (!mounted) return;
     setState(() => _isSaving = false);
     showShopSnackBar(context, 'Shop profile saved successfully.');
-    Navigator.pop(context);
+    Navigator.pop(context, true);
   }
 
   String? _requiredText(String? value, String label, {int minLength = 1}) {

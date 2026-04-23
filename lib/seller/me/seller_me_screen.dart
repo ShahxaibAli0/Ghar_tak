@@ -1,10 +1,14 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import '../auth/seller_auth_store.dart';
 import '../widgets/seller_colors.dart';
 import '../auth/seller_login_screen.dart';
 import '../shop/change_password_screen.dart';
 import '../shop/shop_address_screen.dart';
 import '../shop/shop_banner_screen.dart';
 import '../shop/shop_profile_screen.dart';
+import '../shop/seller_shop_profile_store.dart';
 
 class SellerMeScreen extends StatefulWidget {
   const SellerMeScreen({super.key});
@@ -15,6 +19,22 @@ class SellerMeScreen extends StatefulWidget {
 
 class _SellerMeScreenState extends State<SellerMeScreen> {
   bool _notificationsOn = true;
+  SellerShopProfile _shopProfile = SellerShopProfileStore.fallbackProfile;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadShopProfile();
+  }
+
+  Future<void> _loadShopProfile() async {
+    final profile = await SellerShopProfileStore.load();
+    if (!mounted) {
+      return;
+    }
+
+    setState(() => _shopProfile = profile);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -126,87 +146,124 @@ class _SellerMeScreenState extends State<SellerMeScreen> {
 
   // ═══ Header ═══
   Widget _buildHeader() {
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.fromLTRB(20, 56, 20, 28),
-      decoration: const BoxDecoration(
-        color: SellerColors.primary,
-        borderRadius: BorderRadius.only(
-          bottomLeft: Radius.circular(28),
-          bottomRight: Radius.circular(28),
-        ),
+    return ClipRRect(
+      borderRadius: const BorderRadius.only(
+        bottomLeft: Radius.circular(28),
+        bottomRight: Radius.circular(28),
       ),
-      child: Column(
-        children: [
-          // Avatar
-          Stack(
-            children: [
-              Container(
-                width: 80,
-                height: 80,
+      child: Container(
+        width: double.infinity,
+        color: SellerColors.primary,
+        child: Stack(
+          children: [
+            Positioned.fill(child: _buildHeaderBanner()),
+            Positioned.fill(
+              child: DecoratedBox(
                 decoration: BoxDecoration(
-                  color: Colors.white.withValues(alpha: 0.22),
-                  shape: BoxShape.circle,
-                  border: Border.all(color: Colors.white, width: 2.5),
-                ),
-                child: const Icon(Icons.store, color: Colors.white, size: 40),
-              ),
-              Positioned(
-                right: 0,
-                bottom: 0,
-                child: Container(
-                  padding: const EdgeInsets.all(5),
-                  decoration: const BoxDecoration(
-                    color: Colors.white,
-                    shape: BoxShape.circle,
-                  ),
-                  child: const Icon(Icons.edit,
-                      color: SellerColors.primary, size: 14),
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 12),
-          const Text(
-            'Ahmed Electronics',
-            style: TextStyle(
-              color: Colors.white,
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          const SizedBox(height: 4),
-          Text(
-            'ahmed@gmail.com',
-            style: TextStyle(
-              color: Colors.white.withValues(alpha: 0.75),
-              fontSize: 12,
-            ),
-          ),
-          const SizedBox(height: 6),
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 5),
-            decoration: BoxDecoration(
-              color: Colors.white.withValues(alpha: 0.2),
-              borderRadius: BorderRadius.circular(20),
-            ),
-            child: const Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Icon(Icons.verified, color: Colors.white, size: 14),
-                SizedBox(width: 5),
-                Text(
-                  'Verified Seller',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 11,
-                    fontWeight: FontWeight.bold,
+                  gradient: LinearGradient(
+                    colors: [
+                      SellerColors.primary.withValues(alpha: 0.94),
+                      SellerColors.darkGreen.withValues(alpha: 0.84),
+                    ],
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
                   ),
                 ),
-              ],
+              ),
             ),
-          ),
-        ],
+            Padding(
+              padding: const EdgeInsets.fromLTRB(20, 56, 20, 28),
+              child: Column(
+                children: [
+                  Stack(
+                    children: [
+                      Container(
+                        width: 80,
+                        height: 80,
+                        decoration: BoxDecoration(
+                          color: Colors.white.withValues(alpha: 0.22),
+                          shape: BoxShape.circle,
+                          border: Border.all(color: Colors.white, width: 2.5),
+                        ),
+                        child: _buildProfileAvatar(),
+                      ),
+                      Positioned(
+                        right: 0,
+                        bottom: 0,
+                        child: Container(
+                          padding: const EdgeInsets.all(5),
+                          decoration: const BoxDecoration(
+                            color: Colors.white,
+                            shape: BoxShape.circle,
+                          ),
+                          child: const Icon(
+                            Icons.edit,
+                            color: SellerColors.primary,
+                            size: 14,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 12),
+                  Text(
+                    _shopProfile.shopName,
+                    textAlign: TextAlign.center,
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    _shopProfile.sellerEmail,
+                    style: TextStyle(
+                      color: Colors.white.withValues(alpha: 0.78),
+                      fontSize: 12,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    _shopProfile.shopDescription,
+                    textAlign: TextAlign.center,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
+                      color: Colors.white.withValues(alpha: 0.9),
+                      fontSize: 12,
+                      height: 1.35,
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+                  Container(
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 12, vertical: 5),
+                    decoration: BoxDecoration(
+                      color: Colors.white.withValues(alpha: 0.2),
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                    child: const Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(Icons.verified, color: Colors.white, size: 14),
+                        SizedBox(width: 5),
+                        Text(
+                          'Verified Seller',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 11,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -217,6 +274,43 @@ class _SellerMeScreenState extends State<SellerMeScreen> {
       context,
       MaterialPageRoute(builder: (_) => screen),
     );
+    await _loadShopProfile();
+  }
+
+  Widget _buildHeaderBanner() {
+    final bannerPath = _shopProfile.bannerPath;
+    if (!_hasLocalImage(bannerPath)) {
+      return const SizedBox.shrink();
+    }
+
+    return Image.file(
+      File(bannerPath!),
+      fit: BoxFit.cover,
+      errorBuilder: (_, __, ___) => const SizedBox.shrink(),
+    );
+  }
+
+  Widget _buildProfileAvatar() {
+    final logoPath = _shopProfile.logoPath;
+    if (_hasLocalImage(logoPath)) {
+      return ClipOval(
+        child: Image.file(
+          File(logoPath!),
+          fit: BoxFit.cover,
+          errorBuilder: (_, __, ___) => const Icon(
+            Icons.store,
+            color: Colors.white,
+            size: 40,
+          ),
+        ),
+      );
+    }
+
+    return const Icon(Icons.store, color: Colors.white, size: 40);
+  }
+
+  bool _hasLocalImage(String? path) {
+    return path != null && path.isNotEmpty && File(path).existsSync();
   }
 
   Widget _buildShopStats() {
@@ -483,7 +577,11 @@ class _SellerMeScreenState extends State<SellerMeScreen> {
               shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(10)),
             ),
-            onPressed: () {
+            onPressed: () async {
+              await SellerAuthStore.logout();
+              if (!context.mounted) {
+                return;
+              }
               Navigator.pushAndRemoveUntil(
                 context,
                 MaterialPageRoute(builder: (_) => const SellerLoginScreen()),

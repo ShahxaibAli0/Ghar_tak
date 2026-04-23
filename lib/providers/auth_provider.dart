@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../shared/app_entry_preference.dart';
+
 class AuthProvider extends ChangeNotifier {
   static const String _sessionKey = 'isLoggedIn';
   static const String _rememberMeKey = 'rememberMe';
@@ -69,6 +71,7 @@ class AuthProvider extends ChangeNotifier {
       await _clearRememberedCredentials();
     }
 
+    await AppEntryPreference.setBuyerMode();
     _setCurrentUser(user, loggedIn: rememberMe);
     notifyListeners();
   }
@@ -101,6 +104,7 @@ class AuthProvider extends ChangeNotifier {
       await _clearRememberedCredentials();
     }
 
+    await AppEntryPreference.setBuyerMode();
     _setCurrentUser(user, loggedIn: true);
     notifyListeners();
     return null;
