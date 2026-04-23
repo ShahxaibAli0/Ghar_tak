@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../providers/auth_provider.dart';
-import '../../seller/auth/seller_auth_store.dart';
 import '../../shared/app_entry_preference.dart';
 
 class SplashScreen extends StatefulWidget {
@@ -41,16 +40,14 @@ class _SplashScreenState extends State<SplashScreen>
       Future.delayed(const Duration(seconds: 2)),
       context.read<AuthProvider>().checkSession(),
       AppEntryPreference.load(),
-      SellerAuthStore.hasAccount(),
     ]);
 
     if (!mounted) return;
 
     final isLoggedIn = results[1] as bool;
     final preferredMode = results[2] as AppEntryMode?;
-    final hasSellerAccount = results[3] as bool;
 
-    if (preferredMode == AppEntryMode.seller && hasSellerAccount) {
+    if (preferredMode == AppEntryMode.seller) {
       Navigator.pushReplacementNamed(context, '/seller-splash');
       return;
     }

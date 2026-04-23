@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import '../../providers/auth_provider.dart';
+import '../../seller/auth/become_vendor_screen.dart';
+import '../../shared/app_entry_preference.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -82,6 +84,18 @@ class _LoginScreenState extends State<LoginScreen> {
     } else {
       Navigator.pushReplacementNamed(context, '/home');
     }
+  }
+
+  Future<void> _switchToSellerAccount() async {
+    await AppEntryPreference.setSellerMode();
+    if (!mounted) {
+      return;
+    }
+
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(builder: (_) => const BecomeVendorScreen()),
+    );
   }
 
   @override
@@ -254,6 +268,19 @@ class _LoginScreenState extends State<LoginScreen> {
                       ),
                     ),
                   ],
+                ),
+                const SizedBox(height: 8),
+                Center(
+                  child: TextButton(
+                    onPressed: _isLoading ? null : _switchToSellerAccount,
+                    child: const Text(
+                      "Switch to Seller Account",
+                      style: TextStyle(
+                        color: Colors.green,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ),
                 ),
               ],
             ),

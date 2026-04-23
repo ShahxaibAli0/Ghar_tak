@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import '../auth/seller_login_screen.dart';
+import '../auth/seller_auth_entry_screen.dart';
 import '../auth/seller_auth_store.dart';
-import '../auth/seller_register_screen.dart';
 
 class SellerSplashScreen extends StatefulWidget {
   const SellerSplashScreen({super.key});
@@ -86,7 +85,6 @@ class _SellerSplashScreenState extends State<SellerSplashScreen>
     _taglineController.forward();
 
     final hasSession = await SellerAuthStore.checkSession();
-    final hasAccount = await SellerAuthStore.hasAccount();
 
     if (!mounted) {
       return;
@@ -101,10 +99,7 @@ class _SellerSplashScreenState extends State<SellerSplashScreen>
             if (hasSession) {
               return const _SellerHomeRouteHost();
             }
-            if (hasAccount) {
-              return const SellerLoginScreen();
-            }
-            return const SellerRegisterScreen();
+            return const SellerAuthEntryScreen(showBackButton: false);
           },
           transitionsBuilder: (_, animation, __, child) {
             return FadeTransition(opacity: animation, child: child);

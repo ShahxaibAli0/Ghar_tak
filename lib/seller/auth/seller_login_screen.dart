@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
+import '../../shared/app_entry_preference.dart';
 import '../widgets/seller_colors.dart';
+import '../../screens/auth/login_screen.dart';
 import 'seller_auth_store.dart';
 import 'seller_register_screen.dart';
 
@@ -91,6 +93,18 @@ class _SellerLoginScreenState extends State<SellerLoginScreen> {
     }
 
     Navigator.pushReplacementNamed(context, '/seller-home');
+  }
+
+  Future<void> _switchToBuyerAccount() async {
+    await AppEntryPreference.setBuyerMode();
+    if (!mounted) {
+      return;
+    }
+
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(builder: (_) => const LoginScreen()),
+    );
   }
 
   @override
@@ -349,6 +363,19 @@ class _SellerLoginScreenState extends State<SellerLoginScreen> {
                             fontSize: 15,
                             color: SellerColors.primary,
                             fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    Center(
+                      child: TextButton(
+                        onPressed: _isLoggingIn ? null : _switchToBuyerAccount,
+                        child: const Text(
+                          'Switch to Buyer Account',
+                          style: TextStyle(
+                            color: SellerColors.primary,
+                            fontWeight: FontWeight.w600,
                           ),
                         ),
                       ),
