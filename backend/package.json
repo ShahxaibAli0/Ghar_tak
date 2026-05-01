@@ -1,0 +1,21 @@
+{
+  "name": "ghar-tak-backend",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Backend API for Ghar Tak AI chat features.",
+  "main": "src/server.js",
+  "type": "module",
+  "engines": {
+    "node": ">=18"
+  },
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "node --watch src/server.js",
+    "check": "node --check src/server.js && node --check src/ollamaClient.js && node --check src/prompts.js"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2"
+  }
+}
