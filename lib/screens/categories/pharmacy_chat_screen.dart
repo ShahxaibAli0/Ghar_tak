@@ -1,25 +1,70 @@
 import 'package:flutter/material.dart';
 
+import '../../services/ai_chat_service.dart';
+
 class PharmacyChatScreen extends StatefulWidget {
   final String storeName;
 
-  PharmacyChatScreen({required this.storeName});
+  const PharmacyChatScreen({super.key, required this.storeName});
 
   @override
-  _PharmacyChatScreenState createState() => _PharmacyChatScreenState();
+  State<PharmacyChatScreen> createState() => _PharmacyChatScreenState();
 }
 
 class _PharmacyChatScreenState extends State<PharmacyChatScreen> {
   final TextEditingController _controller = TextEditingController();
-  List<String> messages = [];
+  final AiChatService _aiChatService = AiChatService();
+  final List<Map<String, String>> messages = [];
+  bool _isWaitingForAi = false;
 
-  void sendMessage() {
-    if (_controller.text.trim().isEmpty) return;
+  Future<void> sendMessage() async {
+    final text = _controller.text.trim();
+    if (text.isEmpty || _isWaitingForAi) return;
 
     setState(() {
-      messages.add(_controller.text.trim());
+      messages.add({'sender': 'user', 'text': text});
+      _isWaitingForAi = true;
       _controller.clear();
     });
+
+    try {
+      final reply = await _aiChatService.sendMessage(
+        chatType: 'pharmacy',
+        storeName: widget.storeName,
+        message: text,
+        history: messages
+            .map(
+              (message) => AiChatMessage(
+                role: message['sender'] == 'ai' ? 'assistant' : 'user',
+                content: message['text'] ?? '',
+              ),
+            )
+            .toList(),
+      );
+
+      if (!mounted) return;
+      setState(() {
+        messages.add({'sender': 'ai', 'text': reply});
+      });
+    } catch (_) {
+      if (!mounted) return;
+      setState(() {
+        messages.add({
+          'sender': 'ai',
+          'text': 'Sorry, AI reply nahi aa saki. Backend check karen.',
+        });
+      });
+    } finally {
+      if (mounted) {
+        setState(() => _isWaitingForAi = false);
+      }
+    }
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
   }
 
   @override
@@ -33,28 +78,33 @@ class _PharmacyChatScreenState extends State<PharmacyChatScreen> {
         children: [
           Expanded(
             child: ListView.builder(
-              padding: EdgeInsets.all(10),
-              itemCount: messages.length,
+              padding: const EdgeInsets.all(10),
+              itemCount: messages.length + (_isWaitingForAi ? 1 : 0),
               itemBuilder: (context, index) {
+                final isTyping = index >= messages.length;
+                final message = isTyping
+                    ? {'sender': 'ai', 'text': 'AI is typing...'}
+                    : messages[index];
+                final isUser = message['sender'] == 'user';
+
                 return Align(
-                  alignment: Alignment.centerRight,
+                  alignment:
+                      isUser ? Alignment.centerRight : Alignment.centerLeft,
                   child: Container(
-                    margin: EdgeInsets.symmetric(vertical: 5),
-                    padding: EdgeInsets.all(10),
+                    margin: const EdgeInsets.symmetric(vertical: 5),
+                    padding: const EdgeInsets.all(10),
                     decoration: BoxDecoration(
-                      color: Colors.green.shade100,
+                      color: isUser ? Colors.green.shade100 : Colors.white,
                       borderRadius: BorderRadius.circular(12),
                     ),
-                    child: Text(messages[index]),
+                    child: Text(message['text'] ?? ''),
                   ),
                 );
               },
             ),
           ),
-
-          // Input Field
           Container(
-            padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
             color: Colors.white,
             child: Row(
               children: [
@@ -62,24 +112,24 @@ class _PharmacyChatScreenState extends State<PharmacyChatScreen> {
                   child: TextField(
                     controller: _controller,
                     decoration: InputDecoration(
-                      hintText: "Type your message...",
+                      hintText: 'Type your message...',
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(25),
                       ),
                     ),
                   ),
                 ),
-                SizedBox(width: 8),
+                const SizedBox(width: 8),
                 CircleAvatar(
                   backgroundColor: Colors.green,
                   child: IconButton(
-                    icon: Icon(Icons.send, color: Colors.white),
-                    onPressed: sendMessage,
+                    icon: const Icon(Icons.send, color: Colors.white),
+                    onPressed: _isWaitingForAi ? null : sendMessage,
                   ),
-                )
+                ),
               ],
             ),
-          )
+          ),
         ],
       ),
     );

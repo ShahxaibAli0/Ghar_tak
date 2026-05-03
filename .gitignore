@@ -62,3 +62,17 @@ macos/Flutter/GeneratedPluginRegistrant.swift
 windows/flutter/generated_plugin_registrant.cc
 windows/flutter/generated_plugin_registrant.h
 windows/flutter/generated_plugins.cmake
+apk/linux/flutter/generated_plugin_registrant.cc
+apk/linux/flutter/generated_plugin_registrant.h
+apk/linux/flutter/generated_plugins.cmake
+apk/macos/Flutter/GeneratedPluginRegistrant.swift
+apk/windows/flutter/generated_plugin_registrant.cc
+apk/windows/flutter/generated_plugin_registrant.h
+apk/windows/flutter/generated_plugins.cmake
+linux/flutter/generated_plugin_registrant.cc
+linux/flutter/generated_plugin_registrant.h
+linux/flutter/generated_plugins.cmake
+macos/Flutter/GeneratedPluginRegistrant.swift
+windows/flutter/generated_plugin_registrant.cc
+windows/flutter/generated_plugin_registrant.h
+windows/flutter/generated_plugins.cmake

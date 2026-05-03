@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../services/ai_chat_service.dart';
 import '../widgets/seller_colors.dart';
 
 class SellerChatsScreen extends StatefulWidget {
@@ -569,8 +570,10 @@ class _ChatDetailScreenState
       TextEditingController();
   final ScrollController _scrollController =
       ScrollController();
+  final AiChatService _aiChatService = AiChatService();
 
   late List<Map<String, dynamic>> _messages;
+  bool _isWaitingForAi = false;
 
   final List<String> _quickReplies = [
     'Ji zaroor!',
@@ -587,16 +590,61 @@ class _ChatDetailScreenState
         widget.chat['messages'] as List);
   }
 
-  void _sendMessage(String text) {
-    if (text.trim().isEmpty) return;
+  Future<void> _sendMessage(String text) async {
+    final trimmed = text.trim();
+    if (trimmed.isEmpty || _isWaitingForAi) return;
     setState(() {
       _messages.add({
-        'text': text.trim(),
+        'text': trimmed,
         'isSeller': true,
         'time': 'Now',
       });
+      _isWaitingForAi = true;
     });
     _msgController.clear();
+    _scrollToBottom();
+
+    try {
+      final reply = await _aiChatService.sendMessage(
+        chatType: 'seller',
+        storeName: widget.chat['name']?.toString(),
+        message: trimmed,
+        history: _messages
+            .map(
+              (message) => AiChatMessage(
+                role: message['isSeller'] == true ? 'user' : 'assistant',
+                content: message['text']?.toString() ?? '',
+              ),
+            )
+            .toList(),
+      );
+
+      if (!mounted) return;
+      setState(() {
+        _messages.add({
+          'text': reply,
+          'isSeller': false,
+          'time': 'Now',
+        });
+      });
+    } catch (_) {
+      if (!mounted) return;
+      setState(() {
+        _messages.add({
+          'text': 'Sorry, AI reply nahi aa saki. Backend check karen.',
+          'isSeller': false,
+          'time': 'Now',
+        });
+      });
+    } finally {
+      if (mounted) {
+        setState(() => _isWaitingForAi = false);
+        _scrollToBottom();
+      }
+    }
+  }
+
+  void _scrollToBottom() {
     Future.delayed(const Duration(milliseconds: 100), () {
       if (_scrollController.hasClients) {
         _scrollController.animateTo(
@@ -606,6 +654,13 @@ class _ChatDetailScreenState
         );
       }
     });
+  }
+
+  @override
+  void dispose() {
+    _msgController.dispose();
+    _scrollController.dispose();
+    super.dispose();
   }
 
   @override
@@ -749,9 +804,15 @@ class _ChatDetailScreenState
     return ListView.builder(
       controller: _scrollController,
       padding: const EdgeInsets.all(16),
-      itemCount: _messages.length,
+      itemCount: _messages.length + (_isWaitingForAi ? 1 : 0),
       itemBuilder: (context, index) {
-        final msg = _messages[index];
+        final msg = index >= _messages.length
+            ? {
+                'text': 'AI is typing...',
+                'isSeller': false,
+                'time': 'Now',
+              }
+            : _messages[index];
         final bool isSeller = msg['isSeller'] as bool;
         return _messageBubble(
             msg['text'], msg['time'], isSeller);
@@ -832,7 +893,9 @@ class _ChatDetailScreenState
         itemCount: _quickReplies.length,
         itemBuilder: (context, index) {
           return GestureDetector(
-            onTap: () => _sendMessage(_quickReplies[index]),
+            onTap: _isWaitingForAi
+                ? null
+                : () => _sendMessage(_quickReplies[index]),
             child: Container(
               margin: const EdgeInsets.only(
                   right: 8, top: 4, bottom: 4),
@@ -903,7 +966,9 @@ class _ChatDetailScreenState
           ),
           const SizedBox(width: 10),
           GestureDetector(
-            onTap: () => _sendMessage(_msgController.text),
+            onTap: _isWaitingForAi
+                ? null
+                : () => _sendMessage(_msgController.text),
             child: Container(
               width: 44,
               height: 44,
