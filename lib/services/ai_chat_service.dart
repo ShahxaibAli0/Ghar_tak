@@ -20,7 +20,7 @@ class AiChatMessage {
 class AiChatService {
   static const String _baseUrl = String.fromEnvironment(
     'AI_BACKEND_URL',
-    defaultValue: 'http://192.168.10.5:3000',
+    defaultValue: 'https://ghartak-production-1aa5.up.railway.app',
   );
 
   Future<String> sendMessage({
