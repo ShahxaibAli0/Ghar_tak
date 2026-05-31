@@ -9,17 +9,26 @@ import '../shop/shop_address_screen.dart';
 import '../shop/shop_banner_screen.dart';
 import '../shop/shop_profile_screen.dart';
 import '../shop/seller_shop_profile_store.dart';
+import '../shop/shop_phone_number_screen.dart';
+import '../shop/shop_bank_account_screen.dart';
+import '../shop/shop_help_center_screen.dart';
+import '../shop/shop_contact_support_screen.dart';
+import '../shop/shop_privacy_policy_screen.dart';
+import '../shop/shop_about_app_screen.dart';
 
 class SellerMeScreen extends StatefulWidget {
   const SellerMeScreen({super.key});
 
   @override
-  State<SellerMeScreen> createState() => _SellerMeScreenState();
+  State<SellerMeScreen> createState() =>
+      _SellerMeScreenState();
 }
 
-class _SellerMeScreenState extends State<SellerMeScreen> {
+class _SellerMeScreenState
+    extends State<SellerMeScreen> {
   bool _notificationsOn = true;
-  SellerShopProfile _shopProfile = SellerShopProfileStore.fallbackProfile;
+  SellerShopProfile _shopProfile =
+      SellerShopProfileStore.fallbackProfile;
 
   @override
   void initState() {
@@ -29,11 +38,16 @@ class _SellerMeScreenState extends State<SellerMeScreen> {
 
   Future<void> _loadShopProfile() async {
     final profile = await SellerShopProfileStore.load();
-    if (!mounted) {
-      return;
-    }
-
+    if (!mounted) return;
     setState(() => _shopProfile = profile);
+  }
+
+  Future<void> _openScreen(Widget screen) async {
+    await Navigator.push(
+      context,
+      MaterialPageRoute(builder: (_) => screen),
+    );
+    await _loadShopProfile();
   }
 
   @override
@@ -54,21 +68,24 @@ class _SellerMeScreenState extends State<SellerMeScreen> {
                   'Shop Profile',
                   'Edit name, logo, description',
                   Colors.blue,
-                  () => _openScreen(const ShopProfileScreen()),
+                  () => _openScreen(
+                      const ShopProfileScreen()),
                 ),
                 _MenuItem(
                   Icons.photo_library_outlined,
                   'Shop Banner',
                   'Update your banner image',
                   Colors.purple,
-                  () => _openScreen(const ShopBannerScreen()),
+                  () => _openScreen(
+                      const ShopBannerScreen()),
                 ),
                 _MenuItem(
                   Icons.location_on_outlined,
                   'Shop Address',
                   'Manage pickup location',
                   Colors.teal,
-                  () => _openScreen(const ShopAddressScreen()),
+                  () => _openScreen(
+                      const ShopAddressScreen()),
                 ),
               ],
             ),
@@ -81,21 +98,32 @@ class _SellerMeScreenState extends State<SellerMeScreen> {
                   'Change Password',
                   'Update your password',
                   Colors.orange,
-                  () => _openScreen(const ChangePasswordScreen()),
+                  () => _openScreen(
+                      const ChangePasswordScreen()),
                 ),
                 _MenuItem(
                   Icons.phone_outlined,
                   'Phone Number',
                   'Update contact number',
                   Colors.green,
-                  () {},
+                  () => Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (_) =>
+                            const ShopPhoneNumberScreen()),
+                  ),
                 ),
                 _MenuItem(
                   Icons.account_balance_outlined,
                   'Bank Account',
                   'Add or update bank details',
                   Colors.indigo,
-                  () {},
+                  () => Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (_) =>
+                            const ShopBankAccountScreen()),
+                  ),
                 ),
               ],
             ),
@@ -110,28 +138,48 @@ class _SellerMeScreenState extends State<SellerMeScreen> {
                   'Help Center',
                   'FAQs and guides',
                   Colors.blue,
-                  () {},
+                  () => Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (_) =>
+                            const ShopHelpCenterScreen()),
+                  ),
                 ),
                 _MenuItem(
                   Icons.chat_outlined,
                   'Contact Support',
                   'Talk to our team',
                   Colors.green,
-                  () {},
+                  () => Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (_) =>
+                            const ShopContactSupportScreen()),
+                  ),
                 ),
                 _MenuItem(
                   Icons.privacy_tip_outlined,
                   'Privacy Policy',
                   'Read our policy',
                   Colors.grey,
-                  () {},
+                  () => Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (_) =>
+                            const ShopPrivacyPolicyScreen()),
+                  ),
                 ),
                 _MenuItem(
                   Icons.info_outline,
                   'About App',
                   'Version 1.0.0',
                   SellerColors.primary,
-                  () {},
+                  () => Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (_) =>
+                            const ShopAboutAppScreen()),
+                  ),
                 ),
               ],
             ),
@@ -162,8 +210,10 @@ class _SellerMeScreenState extends State<SellerMeScreen> {
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
                     colors: [
-                      SellerColors.primary.withValues(alpha: 0.94),
-                      SellerColors.darkGreen.withValues(alpha: 0.84),
+                      SellerColors.primary
+                          .withValues(alpha: 0.94),
+                      SellerColors.darkGreen
+                          .withValues(alpha: 0.84),
                     ],
                     begin: Alignment.topCenter,
                     end: Alignment.bottomCenter,
@@ -172,7 +222,8 @@ class _SellerMeScreenState extends State<SellerMeScreen> {
               ),
             ),
             Padding(
-              padding: const EdgeInsets.fromLTRB(20, 56, 20, 28),
+              padding: const EdgeInsets.fromLTRB(
+                  20, 56, 20, 28),
               child: Column(
                 children: [
                   Stack(
@@ -181,9 +232,12 @@ class _SellerMeScreenState extends State<SellerMeScreen> {
                         width: 80,
                         height: 80,
                         decoration: BoxDecoration(
-                          color: Colors.white.withValues(alpha: 0.22),
+                          color: Colors.white
+                              .withValues(alpha: 0.22),
                           shape: BoxShape.circle,
-                          border: Border.all(color: Colors.white, width: 2.5),
+                          border: Border.all(
+                              color: Colors.white,
+                              width: 2.5),
                         ),
                         child: _buildProfileAvatar(),
                       ),
@@ -191,7 +245,8 @@ class _SellerMeScreenState extends State<SellerMeScreen> {
                         right: 0,
                         bottom: 0,
                         child: Container(
-                          padding: const EdgeInsets.all(5),
+                          padding:
+                              const EdgeInsets.all(5),
                           decoration: const BoxDecoration(
                             color: Colors.white,
                             shape: BoxShape.circle,
@@ -219,7 +274,8 @@ class _SellerMeScreenState extends State<SellerMeScreen> {
                   Text(
                     _shopProfile.sellerEmail,
                     style: TextStyle(
-                      color: Colors.white.withValues(alpha: 0.78),
+                      color: Colors.white
+                          .withValues(alpha: 0.78),
                       fontSize: 12,
                     ),
                   ),
@@ -230,23 +286,28 @@ class _SellerMeScreenState extends State<SellerMeScreen> {
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
                     style: TextStyle(
-                      color: Colors.white.withValues(alpha: 0.9),
+                      color: Colors.white
+                          .withValues(alpha: 0.9),
                       fontSize: 12,
                       height: 1.35,
                     ),
                   ),
                   const SizedBox(height: 10),
                   Container(
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 12, vertical: 5),
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 12, vertical: 5),
                     decoration: BoxDecoration(
-                      color: Colors.white.withValues(alpha: 0.2),
-                      borderRadius: BorderRadius.circular(20),
+                      color: Colors.white
+                          .withValues(alpha: 0.2),
+                      borderRadius:
+                          BorderRadius.circular(20),
                     ),
                     child: const Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        Icon(Icons.verified, color: Colors.white, size: 14),
+                        Icon(Icons.verified,
+                            color: Colors.white,
+                            size: 14),
                         SizedBox(width: 5),
                         Text(
                           'Verified Seller',
@@ -268,25 +329,16 @@ class _SellerMeScreenState extends State<SellerMeScreen> {
     );
   }
 
-  // ═══ Shop Stats ═══
-  Future<void> _openScreen(Widget screen) async {
-    await Navigator.push(
-      context,
-      MaterialPageRoute(builder: (_) => screen),
-    );
-    await _loadShopProfile();
-  }
-
   Widget _buildHeaderBanner() {
     final bannerPath = _shopProfile.bannerPath;
     if (!_hasLocalImage(bannerPath)) {
       return const SizedBox.shrink();
     }
-
     return Image.file(
       File(bannerPath!),
       fit: BoxFit.cover,
-      errorBuilder: (_, __, ___) => const SizedBox.shrink(),
+      errorBuilder: (_, __, ___) =>
+          const SizedBox.shrink(),
     );
   }
 
@@ -305,42 +357,53 @@ class _SellerMeScreenState extends State<SellerMeScreen> {
         ),
       );
     }
-
-    return const Icon(Icons.store, color: Colors.white, size: 40);
+    return const Icon(Icons.store,
+        color: Colors.white, size: 40);
   }
 
   bool _hasLocalImage(String? path) {
-    return path != null && path.isNotEmpty && File(path).existsSync();
+    return path != null &&
+        path.isNotEmpty &&
+        File(path).existsSync();
   }
 
+  // ═══ Shop Stats ═══
   Widget _buildShopStats() {
     return Transform.translate(
       offset: const Offset(0, -16),
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16),
+        padding:
+            const EdgeInsets.symmetric(horizontal: 16),
         child: Container(
-          padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 8),
+          padding: const EdgeInsets.symmetric(
+              vertical: 16, horizontal: 8),
           decoration: BoxDecoration(
             color: Colors.white,
             borderRadius: BorderRadius.circular(16),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withValues(alpha: 0.07),
+                color: Colors.black
+                    .withValues(alpha: 0.07),
                 blurRadius: 12,
                 offset: const Offset(0, 4),
               ),
             ],
           ),
           child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            mainAxisAlignment:
+                MainAxisAlignment.spaceAround,
             children: [
-              _statItem('56', 'Products', Icons.inventory_2_outlined),
+              _statItem('56', 'Products',
+                  Icons.inventory_2_outlined),
               _divider(),
-              _statItem('248', 'Orders', Icons.receipt_long_outlined),
+              _statItem('248', 'Orders',
+                  Icons.receipt_long_outlined),
               _divider(),
-              _statItem('4.8⭐', 'Rating', Icons.star_border),
+              _statItem(
+                  '4.8', 'Rating', Icons.star_border),
               _divider(),
-              _statItem('1.2K', 'Visitors', Icons.visibility_outlined),
+              _statItem('1.2K', 'Visitors',
+                  Icons.visibility_outlined),
             ],
           ),
         ),
@@ -348,7 +411,8 @@ class _SellerMeScreenState extends State<SellerMeScreen> {
     );
   }
 
-  Widget _statItem(String value, String label, IconData icon) {
+  Widget _statItem(
+      String value, String label, IconData icon) {
     return Column(
       children: [
         Icon(icon, color: SellerColors.primary, size: 18),
@@ -373,13 +437,18 @@ class _SellerMeScreenState extends State<SellerMeScreen> {
   }
 
   Widget _divider() {
-    return Container(height: 36, width: 1, color: Colors.grey[200]);
+    return Container(
+        height: 36,
+        width: 1,
+        color: Colors.grey[200]);
   }
 
   // ═══ Menu Section ═══
-  Widget _buildMenuSection(String title, List<_MenuItem> items) {
+  Widget _buildMenuSection(
+      String title, List<_MenuItem> items) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16),
+      padding:
+          const EdgeInsets.symmetric(horizontal: 16),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -399,31 +468,40 @@ class _SellerMeScreenState extends State<SellerMeScreen> {
               borderRadius: BorderRadius.circular(16),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withValues(alpha: 0.04),
+                  color: Colors.black
+                      .withValues(alpha: 0.04),
                   blurRadius: 8,
                   offset: const Offset(0, 2),
                 ),
               ],
             ),
             child: Column(
-              children: items.asMap().entries.map((entry) {
+              children:
+                  items.asMap().entries.map((entry) {
                 final int i = entry.key;
                 final _MenuItem item = entry.value;
-                final bool isLast = i == items.length - 1;
+                final bool isLast =
+                    i == items.length - 1;
                 return Column(
                   children: [
                     ListTile(
                       onTap: item.onTap,
-                      contentPadding: const EdgeInsets.symmetric(
-                          horizontal: 16, vertical: 2),
+                      contentPadding:
+                          const EdgeInsets.symmetric(
+                              horizontal: 16,
+                              vertical: 2),
                       leading: Container(
                         width: 38,
                         height: 38,
                         decoration: BoxDecoration(
-                          color: item.color.withValues(alpha: 0.12),
-                          borderRadius: BorderRadius.circular(10),
+                          color: item.color
+                              .withValues(alpha: 0.12),
+                          borderRadius:
+                              BorderRadius.circular(10),
                         ),
-                        child: Icon(item.icon, color: item.color, size: 19),
+                        child: Icon(item.icon,
+                            color: item.color,
+                            size: 19),
                       ),
                       title: Text(
                         item.title,
@@ -466,15 +544,18 @@ class _SellerMeScreenState extends State<SellerMeScreen> {
   // ═══ Notification Toggle ═══
   Widget _buildNotificationToggle() {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16),
+      padding:
+          const EdgeInsets.symmetric(horizontal: 16),
       child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        padding: const EdgeInsets.symmetric(
+            horizontal: 16, vertical: 12),
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(16),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withValues(alpha: 0.04),
+              color:
+                  Colors.black.withValues(alpha: 0.04),
               blurRadius: 8,
               offset: const Offset(0, 2),
             ),
@@ -486,7 +567,8 @@ class _SellerMeScreenState extends State<SellerMeScreen> {
               width: 38,
               height: 38,
               decoration: BoxDecoration(
-                color: Colors.blue.withValues(alpha: 0.12),
+                color:
+                    Colors.blue.withValues(alpha: 0.12),
                 borderRadius: BorderRadius.circular(10),
               ),
               child: const Icon(
@@ -498,7 +580,8 @@ class _SellerMeScreenState extends State<SellerMeScreen> {
             const SizedBox(width: 12),
             const Expanded(
               child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+                crossAxisAlignment:
+                    CrossAxisAlignment.start,
                 children: [
                   Text(
                     'Notifications',
@@ -520,7 +603,8 @@ class _SellerMeScreenState extends State<SellerMeScreen> {
             ),
             Switch(
               value: _notificationsOn,
-              onChanged: (val) => setState(() => _notificationsOn = val),
+              onChanged: (val) =>
+                  setState(() => _notificationsOn = val),
               activeThumbColor: SellerColors.primary,
             ),
           ],
@@ -532,13 +616,15 @@ class _SellerMeScreenState extends State<SellerMeScreen> {
   // ═══ Logout ═══
   Widget _buildLogoutButton(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16),
+      padding:
+          const EdgeInsets.symmetric(horizontal: 16),
       child: SizedBox(
         width: double.infinity,
         height: 50,
         child: OutlinedButton.icon(
           onPressed: () => _logoutDialog(context),
-          icon: const Icon(Icons.logout, color: Colors.red, size: 18),
+          icon: const Icon(Icons.logout,
+              color: Colors.red, size: 18),
           label: const Text(
             'Logout',
             style: TextStyle(
@@ -548,9 +634,11 @@ class _SellerMeScreenState extends State<SellerMeScreen> {
             ),
           ),
           style: OutlinedButton.styleFrom(
-            side: const BorderSide(color: Colors.red, width: 1.5),
-            shape:
-                RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+            side: const BorderSide(
+                color: Colors.red, width: 1.5),
+            shape: RoundedRectangleBorder(
+                borderRadius:
+                    BorderRadius.circular(14)),
           ),
         ),
       ),
@@ -561,34 +649,41 @@ class _SellerMeScreenState extends State<SellerMeScreen> {
     showDialog(
       context: context,
       builder: (_) => AlertDialog(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        title:
-            const Text('Logout', style: TextStyle(fontWeight: FontWeight.bold)),
-        content: const Text('Are you sure you want to logout?'),
+        shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16)),
+        title: const Text('Logout',
+            style:
+                TextStyle(fontWeight: FontWeight.bold)),
+        content: const Text(
+            'Are you sure you want to logout?'),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
             child: const Text('Cancel',
-                style: TextStyle(color: SellerColors.subText)),
+                style: TextStyle(
+                    color: SellerColors.subText)),
           ),
           ElevatedButton(
             style: ElevatedButton.styleFrom(
               backgroundColor: Colors.red,
               shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10)),
+                  borderRadius:
+                      BorderRadius.circular(10)),
             ),
             onPressed: () async {
               await SellerAuthStore.logout();
-              if (!context.mounted) {
-                return;
-              }
+              if (!context.mounted) return;
               Navigator.pushAndRemoveUntil(
                 context,
-                MaterialPageRoute(builder: (_) => const SellerLoginScreen()),
+                MaterialPageRoute(
+                    builder: (_) =>
+                        const SellerLoginScreen()),
                 (route) => false,
               );
             },
-            child: const Text('Logout', style: TextStyle(color: Colors.white)),
+            child: const Text('Logout',
+                style:
+                    TextStyle(color: Colors.white)),
           ),
         ],
       ),
@@ -602,5 +697,6 @@ class _MenuItem {
   final String subtitle;
   final Color color;
   final VoidCallback onTap;
-  _MenuItem(this.icon, this.title, this.subtitle, this.color, this.onTap);
+  _MenuItem(this.icon, this.title, this.subtitle,
+      this.color, this.onTap);
 }
