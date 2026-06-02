@@ -34,5 +34,15 @@ List<Offer> dummyOffers = [
     completedjobs: 150,
     status: "pending",
   ),
+    Offer(
+    providerName: "Sana",
+    serviceName: "Pipe Fixing",
+    description: "Expert plumbing services",
+    price: 1500,
+    category: "Plumbing",
+    rating: 4.8,
+    completedjobs: 99,
+    status: "pending",
+  ),
 
 ];

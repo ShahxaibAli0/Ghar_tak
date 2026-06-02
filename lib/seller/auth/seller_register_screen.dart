@@ -29,7 +29,10 @@ class _SellerRegisterScreenState extends State<SellerRegisterScreen> {
   bool _rememberMe = false;
   bool _isRegistering = false;
   String? _selectedCategory;
+  String? _selectedGender;
   String? _errorMessage;
+
+  final List<String> _genders = const ['Male', 'Female', 'Other'];
 
   final List<String> _categories = const [
     'Grocery',
@@ -304,6 +307,27 @@ class _SellerRegisterScreenState extends State<SellerRegisterScreen> {
                       inputFormatters: [
                         FilteringTextInputFormatter.digitsOnly,
                       ],
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: 14),
+                      child: DropdownButtonFormField<String>(
+                        initialValue: _selectedGender,
+                        decoration: _inputDecoration('Gender', Icons.people),
+                        dropdownColor: SellerColors.white,
+                        borderRadius: BorderRadius.circular(12),
+                        items: _genders
+                            .map(
+                              (gender) => DropdownMenuItem(
+                                value: gender,
+                                child: Text(gender),
+                              ),
+                            )
+                            .toList(),
+                        onChanged: (value) =>
+                            setState(() => _selectedGender = value),
+                        validator: (value) =>
+                            value == null ? 'Please select a gender' : null,
+                      ),
                     ),
                     const SizedBox(height: 8),
                     _sectionLabel('Security'),
